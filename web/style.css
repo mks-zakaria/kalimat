@@ -130,3 +130,11 @@ details.clue[open] summary::after { content: none; }
 .pager { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; margin-top: 28px; font-weight: 700; }
 ol.levels { padding-inline-start: 0; list-style: none; }
 ol.levels li { padding: 10px 0; border-bottom: 1px solid var(--border); }
+
+/* word-search answer grid: every cell has a letter; each found word gets its own colour */
+.xgrid.ws td { background: var(--surface); color: var(--muted); box-shadow: 0 0 0 1px var(--border); font-weight: 700; }
+.xgrid.ws td.hit { color: #fff; box-shadow: none; }
+.w0 { background: #2A9D8F !important; } .w1 { background: #E76F51 !important; } .w2 { background: #6A4C93 !important; }
+.w3 { background: #B9862E !important; } .w4 { background: #3D7DCA !important; } .w5 { background: #C2185B !important; }
+.w6 { background: #558B2F !important; } .w7 { background: #8D6E63 !important; }
+i.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 6px; vertical-align: middle; }
