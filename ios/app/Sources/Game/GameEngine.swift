@@ -78,6 +78,17 @@ final class GameEngine {
         return options.first
     }
 
+    /// The next unsolved word after `entry` (wrapping), for auto-advance.
+    func nextUnsolved(after entry: Entry?) -> Entry? {
+        let list = level.entries
+        let start = entry.flatMap { list.firstIndex(of: $0) } ?? -1
+        for k in 1...max(list.count, 1) {
+            let e = list[(start + k + list.count) % list.count]
+            if !solved.contains(e.id) { return e }
+        }
+        return nil
+    }
+
     // MARK: open word
 
     func open(_ entry: Entry) {

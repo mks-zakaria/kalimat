@@ -43,6 +43,9 @@ struct RootView: View {
                 }
         }
         .tint(Theme.C.accent)
+        #if DEBUG
+        .onAppear { DebugLaunch.apply(packs: packs, path: &path) }
+        #endif
         .onChange(of: path) { old, new in
             if new.count > old.count { SoundService.shared.play(.open) }
         }
@@ -58,3 +61,19 @@ func nextLevel(in packs: [Pack], store: ProgressStore) -> (Level, Pack)? {
     }
     return nil
 }
+
+#if DEBUG
+/// Simulator screenshots only (never in release builds): `-screen packs|levels|board`.
+enum DebugLaunch {
+    static func apply(packs: [Pack], path: inout [Route]) {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-screen"), i + 1 < args.count, let pack = packs.first else { return }
+        switch args[i + 1] {
+        case "packs": path = [.packs]
+        case "levels": path = [.packs, .levels(pack)]
+        case "board": path = [.packs, .levels(pack), .board(pack.levels[0], pack)]
+        default: break
+        }
+    }
+}
+#endif

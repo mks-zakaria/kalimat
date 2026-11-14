@@ -20,5 +20,19 @@
   PASS   3.86:1  border-input             on surface              ui
   PASS   6.66:1  cell-solved              on bg                   ui
   PASS   7.29:1  accent                   on bg                   ui
+  AAA   15.45:1  panel-text               on panel                
+  AA     6.25:1  panel-muted              on panel                
+  AAA   15.21:1  tile-text                on tile                 
+  AAA   10.03:1  on-gold                  on gold                 
+  AA     5.37:1  on-turquoise             on turquoise            
+  AA     6.96:1  on-button                on button               
+  AAA   12.51:1  slot-text                on slot                 
+  AAA   15.43:1  sky-text                 on sky-night            large
+  AAA   12.56:1  sky-text                 on sky-dusk             large
+  AAA    5.30:1  sky-text                 on sky-day              large
+  AAA    6.96:1  sky-text                 on sky-dawn             large
+  AAA   10.03:1  gold                     on coin-pill            
+  AAA   16.31:1  sky-text                 on coin-pill            
+  PASS   3.60:1  tile-edge                on panel                ui
 
-  22 pairs, 0 failing AA
+  36 pairs, 0 failing AA

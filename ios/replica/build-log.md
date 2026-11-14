@@ -13,3 +13,4 @@
 | S05 hints + coins | 2026-11-14 | done (M1) | rewarded ad for coins, S07 store (M2) | keeping removed decoys removed after a reveal rebuilds the bank |
 | checks | 2026-11-14 | — | — | `swiftc -typecheck -sdk iphoneos` compiles the app without the missing platform component |
 | sounds | 2026-11-14 | done | — | 11 original sounds synthesised by tools/make_sounds.py (stdlib, licence-free); ambient session respects the silent switch; mute toggle on S01; haptics paired with each sound |
+| design v2 | 2026-11-14 | done | — | user: "too simple". Desert scenes per pack (drawn in code), 3D tiles, game buttons, emblem logo, winding level path, single-screen play (board + clue dock, auto-advance), celebration overlay with confetti + coin reward (+5 / +10 for 3 stars, first completion only). 36/36 contrast pairs AA. Debug-only `-screen` launch arg + tools/shots.sh for simulator screenshots |

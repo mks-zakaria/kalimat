@@ -77,3 +77,12 @@ StarsView
   0–3 stars, star.fill coin colour, empty star border-input
   used on   S03 S06
 ```
+
+## v2 (2026-11-14) — game look
+
+Added: `Tile3D` (raised tile with an edge; keys, slots, solved/hint cells, medallions,
+buttons), `GameButton` (primary / gold / light), `SceneBackground` (dawn, day, sunset,
+night — one per pack, drawn in code), `Emblem` (logo on an eight-point star),
+`LevelMedallion` (locked / open / solved + pulsing "next"), `PackCard` with its scene,
+`SceneTopBar` (back on the right in RTL), `CoinIcon` (drawn coin), `Confetti`.
+Clue and keys now live in a bottom dock on the board screen (S05 merged into S04).
