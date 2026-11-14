@@ -1,0 +1,132 @@
+/* Site for the Arabic crossword app. Colours mirror app/Sources/Design/Theme.swift.
+   The font is self-hosted (SIL OFL, fonts/OFL.txt): no request leaves this site, so no cookie banner is needed. */
+@font-face {
+  font-family: "Noto Naskh Arabic";
+  src: url("fonts/NotoNaskhArabic.woff") format("woff");
+  font-weight: 400 700; font-display: swap;
+}
+:root {
+  --bg: #F7F2E8;
+  --surface: #FFFDF8;
+  --border: #E4DACB;
+  --text: #2B1D12;
+  --muted: #6B5A48;
+  --accent: #8C2F39;
+  --gold: #F2C55C;
+  --gold-edge: #B9862E;
+  --turquoise: #187770;
+  --sky-1: #3B2A5C;
+  --sky-2: #7A4A6B;
+  --sky-3: #E2A93E;
+  --on-sky: #FFFFFF;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17120E; --surface: #221A14; --border: #3A2E24;
+    --text: #F5ECDD; --muted: #C2B19C; --accent: #F0A3AB;
+    --turquoise: #6FD3C9; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17120E; --surface: #221A14; --border: #3A2E24;
+  --text: #F5ECDD; --muted: #C2B19C; --accent: #F0A3AB;
+  --turquoise: #6FD3C9; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Noto Naskh Arabic", -apple-system, "Segoe UI", Tahoma, sans-serif;
+  font-size: 18px; line-height: 1.85;
+}
+[lang="en"], .en { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif; line-height: 1.65; font-size: 16px; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--turquoise); outline-offset: 2px; border-radius: 6px; }
+
+.hero {
+  background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 55%, var(--sky-3) 100%);
+  color: var(--on-sky); text-align: center; padding: 56px 16px 72px; position: relative; overflow: hidden;
+}
+.hero::after { /* dune */
+  content: ""; position: absolute; inset: auto -10% -60px -10%; height: 120px;
+  background: var(--bg); border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+.hero.small { padding: 32px 16px 56px; }
+.hero img { width: 112px; height: 112px; border-radius: 26px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.hero.small img { width: 64px; height: 64px; border-radius: 15px; }
+.hero h1 { font-size: 2.4rem; margin: 14px 0 4px; line-height: 1.3; }
+.hero.small h1 { font-size: 1.6rem; margin: 8px 0 0; }
+.hero p { margin: 0 auto; max-width: 560px; font-size: 1.15rem; opacity: .95; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 64px; position: relative; z-index: 1; }
+nav.top { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: center; margin: 4px 0 24px; font-size: .98rem; }
+nav.top a { text-decoration: none; font-weight: 700; }
+nav.top a[aria-current="page"] { color: var(--text); text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 6px; text-decoration-thickness: 3px; }
+
+h2 { font-size: 1.3rem; margin: 34px 0 6px; color: var(--accent); line-height: 1.5; }
+h3 { font-size: 1.05rem; margin: 20px 0 4px; }
+.date { color: var(--muted); font-size: .92rem; }
+.lead {
+  background: var(--surface); border: 1px solid var(--border); border-inline-start: 5px solid var(--gold);
+  border-radius: 14px; padding: 14px 18px; margin: 18px 0;
+}
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 18px 0; }
+.grid .card h3 { margin-top: 0; }
+.grid .card p { margin: 0; color: var(--muted); }
+.icon { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: .95rem; margin: 10px 0; }
+th, td { text-align: start; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 700; }
+.table-scroll { overflow-x: auto; }
+
+details { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 16px; margin: 10px 0; }
+summary { cursor: pointer; font-weight: 700; }
+details p { margin: 8px 0 4px; }
+
+.lang-switch { text-align: center; margin: 40px 0 0; }
+.english { border-top: 2px dashed var(--border); margin-top: 48px; padding-top: 8px; }
+
+.button {
+  display: inline-block; background: var(--gold); color: #2B1D12; text-decoration: none; font-weight: 700;
+  padding: 10px 24px; border-radius: 14px; box-shadow: 0 4px 0 var(--gold-edge); margin-top: 10px;
+}
+.soon { display: inline-block; margin-top: 18px; padding: 6px 16px; border-radius: 999px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); font-size: .95rem; }
+
+footer { text-align: center; color: var(--muted); font-size: .9rem; padding: 0 16px 48px; }
+footer a { margin: 0 8px; }
+
+@media (max-width: 520px) {
+  body { font-size: 17px; }
+  .hero h1 { font-size: 2rem; }
+}
+
+.skip { position: absolute; inset-inline-start: -9999px; }
+.skip:focus { inset-inline-start: 16px; top: 8px; z-index: 10; background: var(--surface); padding: 6px 12px; border-radius: 8px; }
+.hero a img { display: inline-block; }
+.muted { color: var(--muted); }
+.crumbs { color: var(--muted); font-size: .95rem; margin: 0 0 8px; }
+footer nav { margin-bottom: 6px; line-height: 2.2; }
+footer nav.en { font-size: .85rem; }
+a.card.link { text-decoration: none; color: var(--text); display: block; }
+a.card.link:hover { border-color: var(--gold-edge); }
+a.card.link h3 { color: var(--accent); }
+
+details.clue summary { list-style: none; }
+details.clue summary::-webkit-details-marker { display: none; }
+details.clue summary::after { content: "اضغط لترى الإجابة"; display: block; font-weight: 400; font-size: .85rem; color: var(--turquoise); }
+details.clue[open] summary::after { content: none; }
+.tag { display: block; font-weight: 400; font-size: .85rem; color: var(--muted); }
+.answer { font-size: 1.6rem; font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+
+.xgrid { border-collapse: separate; border-spacing: 4px; margin: 14px auto; width: auto; }
+.xgrid td { width: 38px; height: 38px; padding: 0; border: 0; text-align: center; vertical-align: middle; border-radius: 8px; }
+.xgrid td.on { background: #FFF6E6; color: #2B1D12; font-weight: 700; font-size: 1.25rem; box-shadow: inset 0 -3px 0 #F1E2C6, 0 0 0 1px #9C7E52; }
+@media (max-width: 420px) { .xgrid { border-spacing: 3px; } .xgrid td { width: 30px; height: 30px; } .xgrid td.on { font-size: 1.05rem; } }
+
+.pager { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; margin-top: 28px; font-weight: 700; }
+ol.levels { padding-inline-start: 0; list-style: none; }
+ol.levels li { padding: 10px 0; border-bottom: 1px solid var(--border); }
