@@ -108,6 +108,10 @@ struct CrosswordBoard: View {
                             GridCell(letter: letters[key], state: state, size: cellSize, isCursor: cursor == key)
                                 .contentShape(Rectangle())
                                 .onTapGesture { onTap?(key) }
+                                .accessibilityElement()
+                                .accessibilityLabel(letters[key] ?? "خانة فارغة")
+                                .accessibilityAddTraits(.isButton)
+                                .accessibilityIdentifier("cell.\(r).\(c)")
                         } else {
                             Color.clear.frame(width: cellSize, height: cellSize)
                         }
@@ -198,7 +202,10 @@ struct AnswerSlots: View {
                 slot(i, size)
                     .contentShape(Rectangle())
                     .onTapGesture { onTap?(i) }
+                    .accessibilityElement()
                     .accessibilityLabel(letters[i] ?? "فارغ")
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityIdentifier("slot.\(i)")
             }
         }
     }
@@ -538,6 +545,7 @@ struct SceneTopBar<Trailing: View>: View {
                     Button(action: back) { RoundIconButton(systemName: "chevron.backward") }
                         .buttonStyle(PressStyle())
                         .accessibilityLabel("رجوع")
+                        .accessibilityIdentifier("nav.back")
                 } else { Color.clear.frame(width: 44, height: 44) }
                 Spacer()
                 trailing

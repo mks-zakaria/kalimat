@@ -5,3 +5,6 @@ app/*.xcodeproj/
 replica/screens/
 app/build.log
 app/build-sim.log
+app/build-device/
+app/build-device.log
+app/icon/preview*.png

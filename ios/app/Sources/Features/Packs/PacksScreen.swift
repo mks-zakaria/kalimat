@@ -5,23 +5,28 @@ struct PacksScreen: View {
     let packs: [Pack]
     @Binding var path: [Route]
     @Environment(ProgressStore.self) private var store
+    @State private var toast: String?
 
     var body: some View {
         ZStack {
             SceneBackground(mood: .night, duneHeight: 0.2)
             VStack(spacing: 0) {
-                SceneTopBar(title: "المجموعات", back: { path.removeLast() }) { CoinBadge(coins: store.coins) }
+                SceneTopBar(title: "المجموعات", back: { path.removeLast() }) { TopBarActions() }
                 ScrollView {
                     VStack(spacing: Theme.S.lg) {
                         ForEach(packs) { pack in
                             let open = store.isUnlocked(pack, in: packs)
                             Button {
-                                if open { path.append(.levels(pack)) } else { SoundService.shared.play(.wrong) }
+                                if open { path.append(.levels(pack)) } else {
+                                    SoundService.shared.play(.wrong)
+                                    toast = "أكمل المجموعة السابقة لفتح هذه المجموعة"
+                                }
                             } label: {
                                 PackCard(title: pack.titleAr, solved: store.solvedCount(pack), total: pack.levels.count,
                                          stars: store.totalStars(pack), order: pack.order, locked: !open)
                             }
                             .buttonStyle(PressStyle())
+                            .accessibilityIdentifier("pack.\(pack.id)")
                         }
                     }
                     .padding(Theme.S.lg)
@@ -29,6 +34,7 @@ struct PacksScreen: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .toast($toast)
     }
 }
 
@@ -37,13 +43,14 @@ struct LevelsScreen: View {
     let pack: Pack
     @Binding var path: [Route]
     @Environment(ProgressStore.self) private var store
+    @State private var toast: String?
 
     var body: some View {
         let nextId = pack.levels.first { !store.isComplete($0.id) && store.isUnlocked($0, in: pack) }?.id
         ZStack {
             SceneBackground(mood: .forPack(order: pack.order), duneHeight: 0.25)
             VStack(spacing: 0) {
-                SceneTopBar(title: pack.titleAr, back: { path.removeLast() }) { CoinBadge(coins: store.coins) }
+                SceneTopBar(title: pack.titleAr, back: { path.removeLast() }) { TopBarActions() }
 
                 HStack(spacing: 6) {
                     Image(systemName: "star.fill").foregroundStyle(Theme.C.gold)
@@ -59,12 +66,16 @@ struct LevelsScreen: View {
                         ForEach(Array(pack.levels.enumerated()), id: \.element.id) { i, level in
                             let unlocked = store.isUnlocked(level, in: pack)
                             Button {
-                                if unlocked { path.append(.board(level, pack)) } else { SoundService.shared.play(.wrong) }
+                                if unlocked { path.append(.board(level, pack)) } else {
+                                    SoundService.shared.play(.wrong)
+                                    toast = "أكمل اللغز السابق أولًا"
+                                }
                             } label: {
                                 LevelMedallion(number: level.number, state: state(level, unlocked), isNext: level.id == nextId)
                             }
                             .buttonStyle(PressStyle())
                             .accessibilityLabel("لغز \(arNum(level.number))")
+                            .accessibilityIdentifier("level.\(level.id)")
                             // winding path: shift left / centre / right
                             .offset(x: [0, 70, 0, -70][i % 4])
                         }
@@ -75,6 +86,7 @@ struct LevelsScreen: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .toast($toast)
     }
 
     private func state(_ level: Level, _ unlocked: Bool) -> TileState {

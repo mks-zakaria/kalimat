@@ -2,7 +2,14 @@ import SwiftUI
 
 @main
 struct CrosswordApp: App {
-    @State private var store = ProgressStore()
+    @State private var store: ProgressStore = {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-reset") {       // UI tests start from a clean save
+            try? FileManager.default.removeItem(at: ProgressStore.defaultURL)
+        }
+        #endif
+        return ProgressStore()
+    }()
     private let packs = ContentStore.loadPacks()
 
     var body: some Scene {

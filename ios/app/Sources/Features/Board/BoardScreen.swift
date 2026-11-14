@@ -29,7 +29,7 @@ struct BoardScreen: View {
 
             VStack(spacing: Theme.S.md) {
                 SceneTopBar(title: "لغز \(arNum(engine.level.number))", back: { path.removeLast() }) {
-                    CoinBadge(coins: store.coins)
+                    TopBarActions()
                 }
 
                 GeometryReader { g in
@@ -101,10 +101,12 @@ struct BoardScreen: View {
                     HintButton(kind: .reveal, cost: ProgressStore.revealCost, enabled: engine.canReveal)
                 }
                 .disabled(!engine.canReveal)
+                .accessibilityIdentifier("hint.reveal")
                 Button { useHint(ProgressStore.removeCost, sound: .erase) { engine.removeDecoy() } } label: {
                     HintButton(kind: .remove, cost: ProgressStore.removeCost, enabled: engine.canRemoveDecoy)
                 }
                 .disabled(!engine.canRemoveDecoy)
+                .accessibilityIdentifier("hint.remove")
             }
             .buttonStyle(PressStyle())
 
@@ -141,6 +143,8 @@ struct BoardScreen: View {
                 .buttonStyle(PressStyle())
                 .disabled(k.used || k.removed || engine.currentSolved)
                 .accessibilityLabel(k.letter)
+                .accessibilityIdentifier("key.\(k.id)")
+                .accessibilityHidden(k.removed)          // a removed letter is gone for VoiceOver too
             }
         }
     }
@@ -316,6 +320,7 @@ struct LevelComplete: View {
                                icon: next == nil ? "square.grid.2x2.fill" : "arrow.left", style: .primary)
                 }
                 .buttonStyle(PressStyle())
+                .accessibilityIdentifier("complete.next")
             }
             .padding(Theme.S.xl)
             .background(Theme.C.panel, in: RoundedRectangle(cornerRadius: 28))

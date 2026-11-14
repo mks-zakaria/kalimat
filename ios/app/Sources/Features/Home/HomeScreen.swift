@@ -14,17 +14,8 @@ struct HomeScreen: View {
 
             VStack(spacing: Theme.S.lg) {
                 HStack {
-                    Button {
-                        store.soundOn.toggle()
-                        SoundService.shared.enabled = store.soundOn
-                        SoundService.shared.play(.tap)
-                    } label: {
-                        RoundIconButton(systemName: store.soundOn ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                    }
-                    .buttonStyle(PressStyle())
-                    .accessibilityLabel(store.soundOn ? "كتم الصوت" : "تشغيل الصوت")
                     Spacer()
-                    CoinBadge(coins: store.coins)
+                    TopBarActions()
                 }
                 .padding(.horizontal, Theme.S.lg)
 
@@ -43,6 +34,7 @@ struct HomeScreen: View {
                             }
                         }
                         .buttonStyle(PressStyle())
+                        .accessibilityIdentifier("home.play")
                         Text("\(pack.titleAr) · لغز \(arNum(level.number))")
                             .font(Theme.F.caption).foregroundStyle(.white)
                             .padding(.horizontal, Theme.S.md).padding(.vertical, 4)
@@ -56,6 +48,7 @@ struct HomeScreen: View {
                     }
                     .buttonStyle(PressStyle())
                     .disabled(packs.isEmpty)
+                    .accessibilityIdentifier("home.packs")
                 }
                 .padding(.horizontal, Theme.S.xl)
                 .padding(.bottom, Theme.S.xl)
