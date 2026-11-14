@@ -3,36 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كلمات — كلمات متقاطعة عربية</title>
-<meta name="description" content="كلمات: لعبة كلمات متقاطعة عربية لـ iPhone. ١٣٥ لغزًا في ٨ حزم، تعريفات من الخليج والعالم العربي، تعمل دون إنترنت.">
-<meta property="og:title" content="كلمات — كلمات متقاطعة عربية">
-<meta property="og:description" content="١٣٥ لغزًا بالعربية الفصحى، بإملاء صحيح، تعمل دون إنترنت.">
+<title>كلمات – لعبة كلمات متقاطعة عربية لـ iPhone</title>
+<meta name="description" content="كلمات: لعبة كلمات متقاطعة عربية لـ iPhone. ١٣٥ لغزًا في ٨ حزم، تعريفات من الخليج والعالم العربي، إملاء صحيح، وتعمل دون إنترنت.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="كلمات">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:title" content="كلمات – لعبة كلمات متقاطعة عربية لـ iPhone">
+<meta property="og:description" content="كلمات: لعبة كلمات متقاطعة عربية لـ iPhone. ١٣٥ لغزًا في ٨ حزم، تعريفات من الخليج والعالم العربي، إملاء صحيح، وتعمل دون إنترنت.">
 <meta property="og:image" content="icon.png">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#3B2A5C">
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/NotoNaskhArabic.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<a class="skip" href="#main">تخطَّ إلى المحتوى</a>
 <header class="hero">
-  <img src="icon.png" alt="أيقونة لعبة كلمات">
+  <a href="index.html"><img src="icon.png" alt="أيقونة لعبة كلمات"></a>
   <h1>كلمات</h1>
   <p>كلمات متقاطعة بالعربية، بتعريفات من الخليج والعالم العربي، في لغز قصير تحلّه في دقائق.</p>
-  <!-- Replace with the App Store badge and link once the app is live. -->
   <span class="soon">قريبًا على App Store</span>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main">
   <nav class="top" aria-label="روابط الموقع">
     <a href="index.html" aria-current="page">الرئيسية</a>
+    <a href="answers/index.html">حلول الألغاز</a>
     <a href="privacy.html">الخصوصية</a>
-    <a href="terms.html">شروط الاستخدام</a>
+    <a href="terms.html">الشروط العامة</a>
     <a href="support.html">الدعم</a>
   </nav>
-
-  <div class="grid">
+<div class="grid">
     <div class="card"><span class="icon" aria-hidden="true">🧩</span><h3>١٣٥ لغزًا</h3><p>ثماني حزم تتدرّج من السهل إلى الصعب، من أول الفجر إلى ليل الصحراء.</p></div>
     <div class="card"><span class="icon" aria-hidden="true">🌴</span><h3>من بيئتنا</h3><p>الخليج والجغرافيا والطبيعة واللغة والرياضة والتاريخ والدين والطعام.</p></div>
     <div class="card"><span class="icon" aria-hidden="true">✍️</span><h3>إملاء صحيح</h3><p>الهمزات بأشكالها والألف المقصورة كما تُكتب، لا تبسيط يُفسد الكلمة.</p></div>
@@ -41,12 +45,26 @@
     <div class="card"><span class="icon" aria-hidden="true">🔒</span><h3>بلا حساب</h3><p>لا تسجيل ولا بريد. تقدّمك محفوظ على جهازك.</p></div>
   </div>
 
+  <div class="lead"><strong>علقت في لغز؟</strong> كل الإجابات في صفحة <a href="answers/index.html">حلول الألغاز</a>، مرتّبة حسب الحزمة ورقم اللغز، وكل إجابة مخفيّة حتى تضغط عليها.</div>
+
   <p class="lang-switch en" lang="en" dir="ltr">Kalimat is an Arabic crossword game for iPhone: 135 puzzles in 8 packs, correct Arabic spelling, fully offline.
-  <a href="privacy.html#english">Privacy</a> · <a href="terms.html#english">Terms</a> · <a href="support.html#english">Support</a></p>
+  <a href="answers/index.html">Answers</a></p>
+
 </main>
 
 <footer>
-  <a href="privacy.html">الخصوصية</a> · <a href="terms.html">شروط الاستخدام</a> · <a href="support.html">الدعم</a> · <a href="mailto:makhkhas.zakaria@gmail.com">تواصل معنا</a>
+  <nav aria-label="روابط قانونية">
+    <a href="answers/index.html">حلول الألغاز</a> ·
+    <a href="privacy.html">سياسة الخصوصية</a> ·
+    <a href="terms.html">الشروط العامة للاستخدام</a> ·
+    <a href="privacy.html#cookies">ملفات تعريف الارتباط</a> ·
+    <a href="support.html">الدعم</a> ·
+    <a href="mailto:makhkhas.zakaria@gmail.com">تواصل معنا</a>
+  </nav>
+  <nav class="en" lang="en" dir="ltr" aria-label="Legal links">
+    <a href="privacy.html#english">Privacy</a> · <a href="terms.html#english">Terms of use</a> ·
+    <a href="privacy.html#en-cookies">Cookies</a> · <a href="support.html#english">Support</a>
+  </nav>
   <p>© ٢٠٢٦ <span dir="ltr">Zakaria Makhkhas</span></p>
 </footer>
 </body>

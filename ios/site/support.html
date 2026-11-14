@@ -3,31 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الدعم — كلمات</title>
-<meta name="description" content="الدعم والأسئلة الشائعة للعبة كلمات المتقاطعة. Support and FAQ in English below.">
+<title>الدعم والأسئلة الشائعة | كلمات</title>
+<meta name="description" content="الدعم والأسئلة الشائعة للعبة كلمات المتقاطعة: طريقة اللعب، العملات، النجوم، الإعلانات، والإبلاغ عن خطأ. Support in English.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="كلمات">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:title" content="الدعم والأسئلة الشائعة | كلمات">
+<meta property="og:description" content="الدعم والأسئلة الشائعة للعبة كلمات المتقاطعة: طريقة اللعب، العملات، النجوم، الإعلانات، والإبلاغ عن خطأ. Support in English.">
+<meta property="og:image" content="icon.png">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#3B2A5C">
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/NotoNaskhArabic.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<a class="skip" href="#main">تخطَّ إلى المحتوى</a>
 <header class="hero small">
-  <img src="icon.png" alt="أيقونة لعبة كلمات">
+  <a href="index.html"><img src="icon.png" alt="أيقونة لعبة كلمات"></a>
   <h1>الدعم</h1>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main">
   <nav class="top" aria-label="روابط الموقع">
     <a href="index.html">الرئيسية</a>
+    <a href="answers/index.html">حلول الألغاز</a>
     <a href="privacy.html">الخصوصية</a>
-    <a href="terms.html">شروط الاستخدام</a>
+    <a href="terms.html">الشروط العامة</a>
     <a href="support.html" aria-current="page">الدعم</a>
-    <a href="#english" lang="en">English</a>
   </nav>
-
-  <p class="lead">وجدت خطأ في كلمة أو تعريف؟ عندك اقتراح أو مشكلة؟ راسلنا على
+<p class="lead">وجدت خطأ في كلمة أو تعريف؟ عندك اقتراح أو مشكلة؟ راسلنا على
   <a href="mailto:makhkhas.zakaria@gmail.com?subject=%D9%83%D9%84%D9%85%D8%A7%D8%AA">makhkhas.zakaria@gmail.com</a>
   واذكر رقم اللغز (مثل «الحزمة ١، اللغز ٧») ونوع جهازك، ونردّ عليك في أقرب وقت.</p>
 
@@ -36,6 +43,11 @@
   <details open>
     <summary>كيف ألعب؟</summary>
     <p>اضغط على خانة في الشبكة لتختار كلمة ويظهر تعريفها، ثم اضغط على الحروف بالترتيب لتكتبها. إذا أخطأت اضغط على الحرف في خانات الإجابة لتعيده. عند حل كلمة ينتقل اللغز تلقائيًا إلى الكلمة التالية.</p>
+  </details>
+
+  <details>
+    <summary>أين أجد حل لغز معيّن؟</summary>
+    <p>في صفحة <a href="answers/index.html">حلول الألغاز</a>: اختر الحزمة ثم رقم اللغز. كل إجابة مخفيّة حتى تضغط على تعريفها، فترى ما تحتاجه فقط.</p>
   </details>
 
   <details>
@@ -98,6 +110,10 @@
       <p>Earn 5 coins for a newly finished puzzle, 10 with three stars and no help, or 25 by choosing to watch a rewarded ad on the coins screen (tap your balance). Spend 20 to reveal a letter or 10 to remove a wrong letter. Coins have no monetary value and cannot be bought.</p>
     </details>
     <details>
+      <summary>Where can I find the answer to a puzzle?</summary>
+      <p>On the <a href="answers/index.html">answers page</a>: pick the pack, then the puzzle number. Each answer stays hidden until you tap its clue.</p>
+    </details>
+    <details>
       <summary>Why are some puzzles locked?</summary>
       <p>Puzzles open in order. Finish every puzzle in a pack to open the next pack.</p>
     </details>
@@ -114,10 +130,22 @@
       <p>Not yet. Progress is stored on your device only and is removed if you delete the App.</p>
     </details>
   </section>
+
 </main>
 
 <footer>
-  <a href="privacy.html">الخصوصية</a> · <a href="terms.html">شروط الاستخدام</a> · <a href="support.html">الدعم</a>
+  <nav aria-label="روابط قانونية">
+    <a href="answers/index.html">حلول الألغاز</a> ·
+    <a href="privacy.html">سياسة الخصوصية</a> ·
+    <a href="terms.html">الشروط العامة للاستخدام</a> ·
+    <a href="privacy.html#cookies">ملفات تعريف الارتباط</a> ·
+    <a href="support.html">الدعم</a> ·
+    <a href="mailto:makhkhas.zakaria@gmail.com">تواصل معنا</a>
+  </nav>
+  <nav class="en" lang="en" dir="ltr" aria-label="Legal links">
+    <a href="privacy.html#english">Privacy</a> · <a href="terms.html#english">Terms of use</a> ·
+    <a href="privacy.html#en-cookies">Cookies</a> · <a href="support.html#english">Support</a>
+  </nav>
   <p>© ٢٠٢٦ <span dir="ltr">Zakaria Makhkhas</span></p>
 </footer>
 </body>

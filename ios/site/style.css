@@ -1,4 +1,10 @@
-/* Site for the Arabic crossword app. Colours mirror app/Sources/Design/Theme.swift. */
+/* Site for the Arabic crossword app. Colours mirror app/Sources/Design/Theme.swift.
+   The font is self-hosted (SIL OFL, fonts/OFL.txt): no request leaves this site, so no cookie banner is needed. */
+@font-face {
+  font-family: "Noto Naskh Arabic";
+  src: url("fonts/NotoNaskhArabic.woff") format("woff");
+  font-weight: 400 700; font-display: swap;
+}
 :root {
   --bg: #F7F2E8;
   --surface: #FFFDF8;
@@ -97,3 +103,30 @@ footer a { margin: 0 8px; }
   body { font-size: 17px; }
   .hero h1 { font-size: 2rem; }
 }
+
+.skip { position: absolute; inset-inline-start: -9999px; }
+.skip:focus { inset-inline-start: 16px; top: 8px; z-index: 10; background: var(--surface); padding: 6px 12px; border-radius: 8px; }
+.hero a img { display: inline-block; }
+.muted { color: var(--muted); }
+.crumbs { color: var(--muted); font-size: .95rem; margin: 0 0 8px; }
+footer nav { margin-bottom: 6px; line-height: 2.2; }
+footer nav.en { font-size: .85rem; }
+a.card.link { text-decoration: none; color: var(--text); display: block; }
+a.card.link:hover { border-color: var(--gold-edge); }
+a.card.link h3 { color: var(--accent); }
+
+details.clue summary { list-style: none; }
+details.clue summary::-webkit-details-marker { display: none; }
+details.clue summary::after { content: "اضغط لترى الإجابة"; display: block; font-weight: 400; font-size: .85rem; color: var(--turquoise); }
+details.clue[open] summary::after { content: none; }
+.tag { display: block; font-weight: 400; font-size: .85rem; color: var(--muted); }
+.answer { font-size: 1.6rem; font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+
+.xgrid { border-collapse: separate; border-spacing: 4px; margin: 14px auto; width: auto; }
+.xgrid td { width: 38px; height: 38px; padding: 0; border: 0; text-align: center; vertical-align: middle; border-radius: 8px; }
+.xgrid td.on { background: #FFF6E6; color: #2B1D12; font-weight: 700; font-size: 1.25rem; box-shadow: inset 0 -3px 0 #F1E2C6, 0 0 0 1px #9C7E52; }
+@media (max-width: 420px) { .xgrid { border-spacing: 3px; } .xgrid td { width: 30px; height: 30px; } .xgrid td.on { font-size: 1.05rem; } }
+
+.pager { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; margin-top: 28px; font-weight: 700; }
+ol.levels { padding-inline-start: 0; list-style: none; }
+ol.levels li { padding: 10px 0; border-bottom: 1px solid var(--border); }
