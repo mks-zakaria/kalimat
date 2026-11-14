@@ -30,6 +30,19 @@ CATEGORIES = {"gulf": "الخليج", "geography": "جغرافيا", "religion":
               "science": "علوم", "language": "لغة", "food": "مأكولات", "history": "تاريخ",
               "flags": "أعلام"}
 
+WEB_REPO_FILES = {
+    ".gitignore": ".claude/\n.DS_Store\n.vercel\n",
+    "README.md": """# Kalimat — website
+
+Static site for the Kalimat (كلمات) Arabic crossword app: landing page, privacy policy,
+general terms of use, support, and puzzle answers.
+
+**Generated — do not edit here.** The sources live in the app repository
+(`site-src/` and `tools/build_site.py`); run `python3 tools/build_site.py` there and commit
+the result in this repo. Deployed as a static site (no build step).
+""",
+}
+
 TASHKEEL = re.compile("[ً-ْٰـ\\s]")
 
 
@@ -235,9 +248,18 @@ def main():
     ap.add_argument("--base-url", default=os.environ.get("SITE_BASE_URL"))
     args = ap.parse_args()
 
-    if os.path.isdir(OUT):
-        shutil.rmtree(OUT)
-    shutil.copytree(os.path.join(SRC, "static"), OUT)
+    # site/ is its own git repo (the web repo deployed on Vercel): clear everything but .git.
+    os.makedirs(OUT, exist_ok=True)
+    for name in os.listdir(OUT):
+        if name == ".git":
+            continue
+        target = os.path.join(OUT, name)
+        shutil.rmtree(target) if os.path.isdir(target) and not os.path.islink(target) else os.remove(target)
+    shutil.copytree(os.path.join(SRC, "static"), OUT, dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns(".claude", ".DS_Store", "__pycache__"))
+    for name, text in WEB_REPO_FILES.items():
+        with open(os.path.join(OUT, name), "w", encoding="utf-8") as f:
+            f.write(text)
     written = []
 
     def write(rel, text):

@@ -8,3 +8,6 @@ app/build-sim.log
 app/build-device/
 app/build-device.log
 app/icon/preview*.png
+.claude/
+__pycache__/
+site/
