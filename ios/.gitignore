@@ -1,0 +1,5 @@
+app/build/
+app/*.xcodeproj/
+*.xcresult
+.DS_Store
+replica/screens/

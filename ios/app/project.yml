@@ -1,0 +1,39 @@
+name: Crossword
+options:
+  bundleIdPrefix: com.zakaria
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+
+targets:
+  Crossword:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+        excludes:
+          - "Features/Catalog/**"     # design check only (tools/render_catalog.swift); never shipped
+      - path: Resources/Packs
+        type: folder                  # keeps the Packs/ subdirectory in the bundle
+      - path: Resources/Fonts
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: "كلمات"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIAppFonts: [NotoNaskhArabic.ttf]
+        CFBundleDevelopmentRegion: ar
+        ITSAppUsesNonExemptEncryption: false
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zakaria.crossword   # placeholder until /replica-brand
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        DEVELOPMENT_TEAM: "JF83ACY9N9"
+        CODE_SIGN_STYLE: Automatic
+        # ⛔ APP-STORE-REVIEW.md §3: device family on the TARGET, not the project
+        TARGETED_DEVICE_FAMILY: "1"
