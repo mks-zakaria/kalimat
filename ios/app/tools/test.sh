@@ -8,4 +8,5 @@ rm -rf build/TestResults.xcresult
 xcodebuild test -project Crossword.xcodeproj -scheme Crossword -destination "id=$SIM" \
   -derivedDataPath build -resultBundlePath build/TestResults.xcresult $ONLY > build/test.log 2>&1
 grep -E "Test Case .* (passed|failed)|error: -|Executed" build/test.log | sed -E 's/^.*Test Case //' | tail -40
-sed -n '/AUDIT-REPORT/,/AUDIT-END/p' build/test.log | grep -v AUDIT
+sed -n "/AUDIT-REPORT/,/AUDIT-END/p" build/test.log | grep -v AUDIT || true
+grep -q "with 0 failures" build/test.log
