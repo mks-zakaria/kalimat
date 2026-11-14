@@ -159,36 +159,53 @@ def weighted_order(pool, weights, rng):
     return [w for _, w in keyed]
 
 
-def make_pack(spec, pool, rng):
-    levels = []
+def make_level(spec, i, pool, rng):
+    """Level i of a pack, or None if the pool can't supply one. Removes used clues from the pool."""
     n = spec["levels"]
     d0, d1 = spec["diff"]
-    for i in range(n):
-        t = i / max(1, n - 1)
-        max_diff = round(d0 + (d1 - d0) * t)
-        min_diff = d0 if d1 == d0 else (2 if spec["diff"][0] >= 2 else 1)
-        target = round(spec["words_min"] + (spec["words_max"] - spec["words_min"]) * t)
-        cands = [w for w in pool if min_diff <= w["difficulty"] <= max_diff]
-        cands = weighted_order(cands, spec["weights"], rng)
+    t = i / max(1, n - 1)
+    max_diff = round(d0 + (d1 - d0) * t)
+    target = round(spec["words_min"] + (spec["words_max"] - spec["words_min"]) * t)
+    for attempt in range(3):
+        lo = d0 if attempt == 0 else 1                       # widen the difficulty band if short
+        hi = max_diff if attempt < 2 else 3
+        cands = weighted_order([w for w in pool if lo <= w["difficulty"] <= hi], spec["weights"], rng)
         if len(cands) < 4:
+            continue
+        found = build_level(cands, target, rng, tries=20)
+        if found and len(found[1]) >= max(4, target - 2):
             break
-        found = build_level(cands, target, rng)
-        if not found or len(found[1]) < max(4, target - 2):
-            break
-        _, placed, (r0, r1, c0, c1) = found
-        entries = []
-        for w, r, c, d in placed:
-            entries.append({"id": w["id"], "answer": w["answer"], "row": r - r0, "col": c - c0, "dir": d,
-                            "clue_ar": w["clue_ar"], "image": w["image"], "category": w["category"],
-                            "difficulty": w["difficulty"]})
-        level = {"id": "%s-%03d" % (spec["id"], i + 1), "number": i + 1,
-                 "width": c1 - c0 + 1, "height": r1 - r0 + 1, "entries": entries}
-        validate(level)
-        levels.append(level)
-        used = {e["id"] for e in entries}
-        pool[:] = [w for w in pool if w["id"] not in used]
-    return {"id": spec["id"], "title_ar": spec["title"], "order": spec["order"],
-            "region": "gulf", "levels": levels}
+    else:
+        return None
+    _, placed, (r0, r1, c0, c1) = found
+    entries = [{"id": w["id"], "answer": w["answer"], "row": r - r0, "col": c - c0, "dir": d,
+                "clue_ar": w["clue_ar"], "image": w["image"], "category": w["category"],
+                "difficulty": w["difficulty"]} for w, r, c, d in placed]
+    level = {"id": "%s-%03d" % (spec["id"], i + 1), "number": i + 1,
+             "width": c1 - c0 + 1, "height": r1 - r0 + 1, "entries": entries}
+    validate(level)
+    used = {e["id"] for e in entries}
+    pool[:] = [w for w in pool if w["id"] not in used]
+    return level
+
+
+def make_packs(plan, pool, rng):
+    """Round-robin: one level per pack per round, so a shortage is shared fairly.
+    Within a round, packs go in `fill` order (first pack, then themed, then mixed)."""
+    order = sorted(plan, key=lambda s: s.get("fill", 1))
+    packs = {s["id"]: {"id": s["id"], "title_ar": s["title"], "order": s["order"], "region": "gulf", "levels": []}
+             for s in plan}
+    done = set()
+    for i in range(max(s["levels"] for s in plan)):
+        for spec in order:
+            if spec["id"] in done or i >= spec["levels"]:
+                continue
+            level = make_level(spec, i, pool, rng)
+            if level is None:
+                done.add(spec["id"])
+            else:
+                packs[spec["id"]]["levels"].append(level)
+    return [packs[s["id"]] for s in plan]
 
 
 def validate(level):
@@ -238,16 +255,15 @@ def main():
     for old in glob.glob(os.path.join(a.out, "*.json")):
         os.remove(old)
     total_levels = total_words = 0
-    for spec in plan:
-        pack = make_pack(spec, pool, rng)
+    for pack in make_packs(plan, pool, rng):
         if not pack["levels"]:
-            print("%s: no levels (pool exhausted)" % spec["id"])
+            print("%s: no levels (pool exhausted)" % pack["id"])
             continue
-        with open(os.path.join(a.out, spec["id"] + ".json"), "w", encoding="utf-8") as f:
+        with open(os.path.join(a.out, pack["id"] + ".json"), "w", encoding="utf-8") as f:
             json.dump(pack, f, ensure_ascii=False, separators=(",", ":"))
         words = sum(len(l["entries"]) for l in pack["levels"])
         sizes = [len(l["entries"]) for l in pack["levels"]]
-        print("%s %-14s %2d levels, %3d words (%d-%d per level)" % (spec["id"], spec["title"], len(pack["levels"]), words, min(sizes), max(sizes)))
+        print("%s %-14s %2d levels, %3d words (%d-%d per level)" % (pack["id"], pack["title_ar"], len(pack["levels"]), words, min(sizes), max(sizes)))
         total_levels += len(pack["levels"]); total_words += words
         for l in pack["levels"][: a.show]:
             show(l)

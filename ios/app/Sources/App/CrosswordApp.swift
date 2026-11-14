@@ -72,6 +72,12 @@ enum DebugLaunch {
         case "packs": path = [.packs]
         case "levels": path = [.packs, .levels(pack)]
         case "board": path = [.packs, .levels(pack), .board(pack.levels[0], pack)]
+        case "level":   // -screen level -level p06-012
+            if let j = args.firstIndex(of: "-level"), j + 1 < args.count,
+               let p = packs.first(where: { $0.levels.contains { $0.id == args[j + 1] } }),
+               let l = p.levels.first(where: { $0.id == args[j + 1] }) {
+                path = [.packs, .levels(p), .board(l, p)]
+            }
         default: break
         }
     }
