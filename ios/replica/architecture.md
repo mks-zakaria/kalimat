@@ -83,7 +83,7 @@ No background jobs. No webhooks.
 
 ## 4. The parts that bite
 
-- **Arabic letter normalisation.** Canonical alphabet: 28 letters + ة + ء. Map أ إ آ ٱ → ا, ى → ي, ؤ → و, ئ → ي, strip tashkeel and tatweel. Applied to answers at generation time and to input at play time. ة stays distinct (it crosses words).
+- **Arabic spelling.** Answers keep their exact letters: 28 letters + ة ء أ إ آ ؤ ئ ى. Only tashkeel, tatweel and spaces are stripped. (v1 folded hamza forms and ى into plain letters; the user caught زئير shown as زيير on 2026-11-14, so folding is now used only to detect duplicate answers.)
 - **RTL.** Across words run right-to-left; `row,col` stored with col 0 = rightmost. Test with the layout direction forced both ways.
 - **Isolated letter glyphs in cells.** Render each cell's single letter in the Naskh font; check ة, ء, ى render at cell size on iPhone 11 and SE.
 - **Grid generation.** Packing 6–10 Arabic words with good crossings is a search problem; backtracking with a score (crossings, compactness) and a size cap (≤ 9×9). Seeded so regenerating is deterministic.

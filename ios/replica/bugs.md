@@ -20,3 +20,5 @@
 ## B03 — removed key still exposed to accessibility
 - **Steps:** Board → "حذف حرف" → count key buttons (UI test).
 - **Expected:** 11 keys. **Actual:** 12 (one invisible, disabled).
+| B04 | S4 | Empty answer slots are exposed as buttons but do nothing (found by the dead-control audit) | fixed — only typed slots carry the button trait |
+| B05 | S2 | Words with ئ ؤ ى أ إ آ shown misspelled (زئير as زيير) because the game folded letter forms | fixed — exact spelling kept in grid and keys; folding only for duplicate detection; engine_check asserts زئير |

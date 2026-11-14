@@ -9,8 +9,9 @@ struct Check {
         var fails = 0
         func expect(_ c: Bool, _ m: String) { if !c { fails += 1; print("FAIL", m) } }
 
-        expect(ArabicText.normalise("إِسْلَام") == "اسلام", "normalise tashkeel+hamza")
-        expect(ArabicText.normalise("مُسْتَشْفَى") == "مستشفي", "normalise alef maqsura")
+        expect(ArabicText.normalise("إِسْلَام") == "إسلام", "strips tashkeel, keeps hamza")
+        expect(ArabicText.normalise("زَئِير") == "زئير", "keeps ئ (user report)")
+        expect(ArabicText.normalise("مُسْتَشْفَى") == "مستشفى", "keeps alef maqsura")
         var a = SeededRNG(seed: "x"), b = SeededRNG(seed: "x")
         expect(a.next() == b.next(), "seeded rng deterministic")
 

@@ -1,10 +1,9 @@
 import Foundation
 
-/// Must match `normalise()` in tools/generate.py exactly.
+/// Must match `normalise()` in tools/generate.py exactly. Only tashkeel, tatweel and
+/// spaces are removed: hamza forms and ى are kept, so words show their real spelling.
 enum ArabicText {
-    private static let map: [Character: Character] = [
-        "أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ؤ": "و", "ئ": "ي",
-    ]
+    private static let map: [Character: Character] = ["ٱ": "ا"]
 
     static func normalise(_ s: String) -> String {
         var out = ""

@@ -204,7 +204,9 @@ struct AnswerSlots: View {
                     .onTapGesture { onTap?(i) }
                     .accessibilityElement()
                     .accessibilityLabel(letters[i] ?? "فارغ")
-                    .accessibilityAddTraits(.isButton)
+                    // only a typed letter can be tapped (it goes back to the keys); empty or
+                    // locked slots are not controls (dead-control audit, bug B04)
+                    .accessibilityAddTraits(states[i] == .typed ? .isButton : [])
                     .accessibilityIdentifier("slot.\(i)")
             }
         }

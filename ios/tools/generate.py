@@ -15,14 +15,21 @@ Deterministic: same sheets + plan + seed => same packs.
 import argparse, csv, glob, json, os, random, re, sys
 
 TASHKEEL = re.compile("[ً-ْٰـ]")
-MAP = str.maketrans({"أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ؤ": "و", "ئ": "ي"})
-ALPHABET = set("ابتثجحخدذرزسشصضطظعغفقكلمنهوية" + "ء")
+# Answers keep their exact spelling (أ إ آ ؤ ئ ى ء are real letters in the grid and on
+# the keys — user report: زئير was shown as زيير). FOLD is only used to detect duplicates.
+FOLD = str.maketrans({"أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ؤ": "و", "ئ": "ي"})
+ALPHABET = set("ابتثجحخدذرزسشصضطظعغفقكلمنهوية" + "ءأإآؤئى")
 MAX_W, MAX_H = 8, 9
 CATEGORIES = {"gulf", "geography", "general", "language", "nature", "science", "sport", "history", "religion", "food"}
 
 
 def normalise(s):
-    return TASHKEEL.sub("", s.strip()).translate(MAP).replace(" ", "")
+    """Same as ArabicText.normalise in the app: strip tashkeel/tatweel/spaces, keep letters."""
+    return TASHKEEL.sub("", s.strip()).replace("ٱ", "ا").replace(" ", "")
+
+
+def fold(s):
+    return normalise(s).translate(FOLD)
 
 
 # ---------- loading ----------
@@ -48,13 +55,13 @@ def load(paths, allow_unreviewed):
                     problems.append("%s clue empty or > 90 chars" % where); continue
                 if cat not in CATEGORIES:
                     problems.append("%s unknown category %r" % (where, cat)); continue
-                if a in normalise(clue):
+                if fold(a) in fold(clue):
                     problems.append("%s clue contains the answer %s" % (where, a)); continue
-                if a in seen_ans:
-                    problems.append("%s duplicate answer %s (also %s)" % (where, a, seen_ans[a])); continue
+                if fold(a) in seen_ans:
+                    problems.append("%s duplicate answer %s (also %s)" % (where, a, seen_ans[fold(a)])); continue
                 if clue in seen_clue:
                     problems.append("%s duplicate clue (also %s)" % (where, seen_clue[clue])); continue
-                seen_ans[a] = where; seen_clue[clue] = where
+                seen_ans[fold(a)] = where; seen_clue[clue] = where
                 try:
                     diff = min(3, max(1, int(r.get("difficulty") or 1)))
                 except ValueError:
