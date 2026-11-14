@@ -24,7 +24,7 @@ Level complete screen with stars,progress,should,unknown,yes,S06 guessed; S06 in
 iCloud sync of progress,progress,should,no,no,reviews: progress lost
 Daily puzzle,engagement,could,no,no,
 Game Center leaderboard / challenge,engagement,could,no,no,reviews miss online challenge
-Haptics and sounds,polish,could,unknown,no,
+Haptics and sounds,polish,could,unknown,yes,original synthesised sounds + haptics; mute on home
 Dark mode,polish,could,no,no,
 Picture-to-word variant (4 pictures),mode,could,no,no,Play comparator #4
 Original clue bank,content,skip,yes,skip,owned content - we write our own

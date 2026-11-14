@@ -51,6 +51,7 @@ struct LevelsScreen: View {
                         Button { path.append(.board(level, pack)) } label: {
                             LevelTile(number: level.number, state: state(level, unlocked))
                         }
+                        .simultaneousGesture(TapGesture().onEnded { if !unlocked { SoundService.shared.play(.wrong) } })
                         .buttonStyle(.plain)
                         .disabled(!unlocked)
                         .accessibilityLabel("لغز \(arNum(level.number))")

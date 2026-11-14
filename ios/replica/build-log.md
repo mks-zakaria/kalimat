@@ -12,3 +12,4 @@
 | S04 + S06 | 2026-11-14 | done (M1) | iCloud sync (M3) | restoring an engine from saved progress without losing the save callback |
 | S05 hints + coins | 2026-11-14 | done (M1) | rewarded ad for coins, S07 store (M2) | keeping removed decoys removed after a reveal rebuilds the bank |
 | checks | 2026-11-14 | — | — | `swiftc -typecheck -sdk iphoneos` compiles the app without the missing platform component |
+| sounds | 2026-11-14 | done | — | 11 original sounds synthesised by tools/make_sounds.py (stdlib, licence-free); ambient session respects the silent switch; mute toggle on S01; haptics paired with each sound |

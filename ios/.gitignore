@@ -3,3 +3,5 @@ app/*.xcodeproj/
 *.xcresult
 .DS_Store
 replica/screens/
+app/build.log
+app/build-sim.log

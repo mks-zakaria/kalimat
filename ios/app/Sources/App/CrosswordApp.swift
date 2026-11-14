@@ -11,6 +11,7 @@ struct CrosswordApp: App {
                 .environment(store)
                 .environment(\.layoutDirection, .rightToLeft)
                 .environment(\.locale, Locale(identifier: "ar"))
+                .onAppear { SoundService.shared.enabled = store.soundOn }
         }
     }
 }
@@ -42,6 +43,9 @@ struct RootView: View {
                 }
         }
         .tint(Theme.C.accent)
+        .onChange(of: path) { old, new in
+            if new.count > old.count { SoundService.shared.play(.open) }
+        }
     }
 }
 

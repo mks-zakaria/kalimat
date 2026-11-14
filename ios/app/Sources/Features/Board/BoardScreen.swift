@@ -53,6 +53,17 @@ struct BoardScreen: View {
                 .presentationDragIndicator(.visible)
         }
         .onAppear(perform: restore)
+        .onChange(of: engine.isComplete) { _, done in
+            guard done else { return }
+            Task {
+                try? await Task.sleep(for: .milliseconds(650))   // after the word's own "correct"
+                SoundService.shared.play(.complete)
+                for _ in 0..<engine.stars {
+                    try? await Task.sleep(for: .milliseconds(380))
+                    SoundService.shared.play(.star)
+                }
+            }
+        }
     }
 
     private var nextInPack: Level? {
@@ -92,7 +103,11 @@ struct BoardScreen: View {
     }
 
     private func open(at cell: CellPos) {
-        guard let e = engine.entryToOpen(at: cell, previous: selected) else { return }
+        guard let e = engine.entryToOpen(at: cell, previous: selected) else {
+            SoundService.shared.play(.tap)
+            return
+        }
+        SoundService.shared.play(.open)
         selected = e
         engine.open(e)
         showClue = true

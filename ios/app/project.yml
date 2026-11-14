@@ -16,6 +16,7 @@ targets:
       - path: Resources/Packs
         type: folder                  # keeps the Packs/ subdirectory in the bundle
       - path: Resources/Fonts
+      - path: Resources/Sounds
     info:
       path: Info.plist
       properties:

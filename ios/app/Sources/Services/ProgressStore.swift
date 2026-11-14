@@ -3,6 +3,10 @@ import Observation
 
 /// Everything the player has earned, in one small JSON file in Application Support.
 /// (iCloud mirroring comes in M3; the file format is already the one in replica/schema.md.)
+struct Settings: Codable, Equatable {
+    var sound = true
+}
+
 struct SaveFile: Codable {
     var version = 1
     var updatedAt = Date()
@@ -10,6 +14,21 @@ struct SaveFile: Codable {
     var levels: [String: LevelProgress] = [:]
     var coins = ProgressStore.startingCoins
     var processedTransactions: [String] = []
+    var settings = Settings()
+
+    init() {}
+
+    /// Missing keys fall back to defaults, so adding a field never wipes a player's progress.
+    init(from d: Decoder) throws {
+        let c = try d.container(keyedBy: CodingKeys.self)
+        version = try c.decodeIfPresent(Int.self, forKey: .version) ?? 1
+        updatedAt = try c.decodeIfPresent(Date.self, forKey: .updatedAt) ?? Date()
+        currentLevelId = try c.decodeIfPresent(String.self, forKey: .currentLevelId)
+        levels = try c.decodeIfPresent([String: LevelProgress].self, forKey: .levels) ?? [:]
+        coins = try c.decodeIfPresent(Int.self, forKey: .coins) ?? ProgressStore.startingCoins
+        processedTransactions = try c.decodeIfPresent([String].self, forKey: .processedTransactions) ?? []
+        settings = try c.decodeIfPresent(Settings.self, forKey: .settings) ?? Settings()
+    }
 }
 
 @Observable
@@ -68,6 +87,13 @@ final class ProgressStore {
 
     func solvedCount(_ pack: Pack) -> Int { pack.levels.filter { isComplete($0.id) }.count }
     func totalStars(_ pack: Pack) -> Int { pack.levels.reduce(0) { $0 + stars(for: $1.id) } }
+
+    // MARK: settings
+
+    var soundOn: Bool {
+        get { file.settings.sound }
+        set { file.settings.sound = newValue; persist() }
+    }
 
     // MARK: coins
 

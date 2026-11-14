@@ -25,7 +25,10 @@ struct ClueScreen: View {
                                 Color.clear.contentShape(Rectangle())
                                     .frame(width: engine.typed.count > 7 ? 36 : Theme.S.slot,
                                            height: engine.typed.count > 7 ? 36 : Theme.S.slot)
-                                    .onTapGesture { engine.tapSlot(i) }
+                                    .onTapGesture {
+                                        if engine.typed[i] != nil && !engine.isLocked(i) { SoundService.shared.play(.undo) }
+                                        engine.tapSlot(i)
+                                    }
                                     .accessibilityLabel("حرف \(arNum(i + 1))")
                             }
                         }
@@ -35,11 +38,11 @@ struct ClueScreen: View {
                 Spacer(minLength: 0)
 
                 HStack(spacing: Theme.S.sm) {
-                    Button { useHint(ProgressStore.revealCost) { engine.revealLetter() } } label: {
+                    Button { useHint(ProgressStore.revealCost, sound: .hint) { engine.revealLetter() } } label: {
                         HintButton(kind: .reveal, cost: ProgressStore.revealCost, enabled: engine.canReveal)
                     }
                     .disabled(!engine.canReveal)
-                    Button { useHint(ProgressStore.removeCost) { engine.removeDecoy() } } label: {
+                    Button { useHint(ProgressStore.removeCost, sound: .erase) { engine.removeDecoy() } } label: {
                         HintButton(kind: .remove, cost: ProgressStore.removeCost, enabled: engine.canRemoveDecoy)
                     }
                     .disabled(!engine.canRemoveDecoy)
@@ -56,16 +59,28 @@ struct ClueScreen: View {
                 Text("حل ألغازًا أخرى بدون مساعدة لتجمع المزيد.")
             }
             .onChange(of: engine.lastWrong) { _, wrong in
-                if wrong { withAnimation(.default) { shake += 1 } }
+                if wrong {
+                    SoundService.shared.play(.wrong)
+                    withAnimation(.default) { shake += 1 }
+                }
             }
             .onChange(of: engine.currentSolved) { _, done in
-                if done { Task { try? await Task.sleep(for: .milliseconds(600)); dismiss() } }
+                if done {
+                    SoundService.shared.play(.correct)
+                    Task { try? await Task.sleep(for: .milliseconds(600)); dismiss() }
+                }
             }
         }
     }
 
-    private func useHint(_ cost: Int, _ action: () -> Void) {
-        guard store.spend(cost) else { noCoins = true; return }
+    private func useHint(_ cost: Int, sound: SoundService.Sound, _ action: () -> Void) {
+        guard store.spend(cost) else {
+            SoundService.shared.play(.wrong)
+            noCoins = true
+            return
+        }
+        SoundService.shared.play(.coin)
+        SoundService.shared.play(sound)
         action()
     }
 
@@ -81,7 +96,10 @@ struct ClueScreen: View {
     private func row(_ keys: ArraySlice<BankKey>) -> some View {
         HStack(spacing: 6) {
             ForEach(keys) { k in
-                Button { engine.tapKey(k) } label: {
+                Button {
+                    SoundService.shared.play(.key)
+                    engine.tapKey(k)
+                } label: {
                     LetterKey(letter: k.letter, state: k.removed ? .removed : (k.used ? .used : .normal))
                 }
                 .buttonStyle(.plain)
