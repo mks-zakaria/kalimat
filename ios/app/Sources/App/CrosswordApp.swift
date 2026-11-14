@@ -18,7 +18,10 @@ struct CrosswordApp: App {
                 .environment(store)
                 .environment(\.layoutDirection, .rightToLeft)
                 .environment(\.locale, Locale(identifier: "ar"))
-                .onAppear { SoundService.shared.enabled = store.soundOn }
+                .onAppear {
+                    SoundService.shared.enabled = store.soundOn
+                    AdService.shared.start()
+                }
         }
     }
 }

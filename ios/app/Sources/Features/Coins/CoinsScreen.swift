@@ -5,6 +5,8 @@ import SwiftUI
 struct CoinsSheet: View {
     @Environment(ProgressStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @State private var ads = AdService.shared
+    @State private var justEarned = false
 
     var body: some View {
         VStack(spacing: Theme.S.lg) {
@@ -30,10 +32,37 @@ struct CoinsSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
+            if ads.canRequestAds {
+                Button {
+                    ads.showRewarded {
+                        Task { @MainActor in
+                            store.earn(AdService.rewardCoins)
+                            SoundService.shared.play(.coin)
+                            justEarned = true
+                        }
+                    }
+                } label: {
+                    GameButton(title: ads.rewardedReady ? "شاهد إعلانًا واربح \(arNum(AdService.rewardCoins))" : "جارٍ تجهيز الإعلان…",
+                               icon: "play.rectangle.fill", style: .primary, height: 52)
+                }
+                .buttonStyle(PressStyle())
+                .disabled(!ads.rewardedReady)
+                .opacity(ads.rewardedReady ? 1 : 0.6)
+                .accessibilityIdentifier("coins.watch")
+            }
+            if justEarned {
+                Text("أضفنا \(arNum(AdService.rewardCoins)) عملة إلى رصيدك").font(Theme.F.caption).foregroundStyle(Theme.C.success)
+            }
+
             Spacer(minLength: 0)
             Button { dismiss() } label: { GameButton(title: "حسنًا", style: .gold, height: 52) }
                 .buttonStyle(PressStyle())
                 .accessibilityIdentifier("coins.close")
+            if ads.privacyOptionsRequired {
+                Button("إعدادات الخصوصية والإعلانات") { ads.showPrivacyOptions() }
+                    .font(Theme.F.caption).foregroundStyle(Theme.C.panelMuted)
+                    .accessibilityIdentifier("coins.privacy")
+            }
         }
         .padding(Theme.S.xl)
         .background(Theme.C.panel.ignoresSafeArea())

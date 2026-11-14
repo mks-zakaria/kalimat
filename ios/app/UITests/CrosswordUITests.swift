@@ -10,7 +10,7 @@ final class CrosswordUITests: XCTestCase {
 
     func launch(_ args: [String] = [], reset: Bool = true) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = (reset ? ["-reset"] : []) + args
+        app.launchArguments = (reset ? ["-reset", "-uitest"] : []) + args
         app.launch()
         return app
     }

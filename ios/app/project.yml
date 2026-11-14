@@ -5,6 +5,11 @@ options:
     iOS: "18.0"
   createIntermediateGroups: true
 
+packages:
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
+    from: "12.0.0"
+
 targets:
   Crossword:
     type: application
@@ -18,6 +23,8 @@ targets:
       - path: Resources/Fonts
       - path: Resources/Sounds
       - path: Resources/Assets.xcassets
+    dependencies:
+      - package: GoogleMobileAds
     info:
       path: Info.plist
       properties:
@@ -27,6 +34,12 @@ targets:
         UIAppFonts: [NotoNaskhArabic.ttf]
         CFBundleDevelopmentRegion: ar
         ITSAppUsesNonExemptEncryption: false
+        # Google's demo app ID (developers.google.com/admob/ios/test-ads) — replace before release
+        GADApplicationIdentifier: ca-app-pub-3940256099942544~1458002511
+        # Concrete purpose, matches what the app does (APP-STORE-REVIEW.md ⛔1)
+        NSUserTrackingUsageDescription: "نستخدم هذا المعرّف لعرض إعلانات أكثر ملاءمة لك. اللعبة تعمل كاملة سواء سمحت أم لا."
+        SKAdNetworkItems:
+          - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
     scheme:

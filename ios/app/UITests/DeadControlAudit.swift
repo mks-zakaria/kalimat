@@ -20,7 +20,7 @@ final class DeadControlAudit: XCTestCase {
 
     func launch(_ s: Screen) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-reset"] + s.args
+        app.launchArguments = ["-reset", "-uitest"] + s.args
         app.launch()
         _ = app.buttons.firstMatch.waitForExistence(timeout: 5)
         sleep(1)

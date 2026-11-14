@@ -52,6 +52,8 @@ struct BoardScreen: View {
                 LevelComplete(stars: engine.stars, reward: reward, next: nextInPack) { next in
                     path.removeLast()
                     if let next { path.append(.board(next, pack)) }
+                    // between levels only, and only if the frequency rules allow it
+                    AdService.shared.levelFinished(levelNumber: engine.level.number, adsRemoved: false)
                 }
                 .transition(.opacity)
             }
@@ -60,6 +62,16 @@ struct BoardScreen: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: engine.current?.id)
         .animation(.easeOut(duration: 0.3), value: showComplete)
         .alert("رصيدك من العملات لا يكفي", isPresented: $noCoins) {
+            if AdService.shared.rewardedReady {
+                Button("شاهد إعلانًا واربح \(arNum(AdService.rewardCoins))") {
+                    AdService.shared.showRewarded {
+                        Task { @MainActor in
+                            store.earn(AdService.rewardCoins)
+                            SoundService.shared.play(.coin)
+                        }
+                    }
+                }
+            }
             Button("حسنًا", role: .cancel) {}
         } message: {
             Text("أنهِ الألغاز لتربح عملات: ٥ لكل لغز و١٠ إذا حصلت على ٣ نجوم.")
@@ -193,7 +205,12 @@ struct BoardScreen: View {
         Task {
             try? await Task.sleep(for: .milliseconds(500))
             if reward > 0 { store.earn(reward) }
+            let firstEverFinish = store.file.levels.values.filter { $0.completedAt != nil }.count <= 1
             showComplete = true
+            if firstEverFinish {
+                // ATT once, after the first finished level, straight from this moment (⛔1)
+                Task { try? await Task.sleep(for: .seconds(2.5)); AdService.shared.requestTrackingIfNeeded() }
+            }
             try? await Task.sleep(for: .milliseconds(300))
             SoundService.shared.play(.complete)
             for _ in 0..<engine.stars {
