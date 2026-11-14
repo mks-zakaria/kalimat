@@ -8,18 +8,21 @@
   Everything after them is the page's <main> content.
 - app/Resources/Packs/*.json: one answers page per puzzle (answers/p01-001.html),
   one page per pack (answers/p01.html) and a hub (answers/index.html).
+- Word search: the app's own Swift generator is compiled and run (tools/export_wordsearch.swift)
+  so the grids match the game exactly: answers/p01-w001.html, answers/ws-p01.html.
 - site-src/static/: copied as-is (stylesheet, icons, self-hosted font).
 
 Every page gets the same <head> (title, description, Open Graph, icons) and footer.
 With --base-url, pages also get a canonical link and a sitemap.xml is written.
 Standard library only.
 """
-import argparse, glob, html, json, os, re, shutil
+import argparse, glob, html, json, os, re, shutil, subprocess, tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "site-src")
 OUT = os.path.join(ROOT, "site")
 PACKS = os.path.join(ROOT, "app", "Resources", "Packs")
+WS_CACHE = os.path.join(SRC, "wordsearch.json")   # last export, used when swiftc is unavailable
 
 APP = "كلمات"
 APP_EN = "Kalimat"
@@ -226,19 +229,115 @@ def pack_page(pack, base_url):
                 f"حلول حزمة {esc(pack['title_ar'])}", body, base_url=base_url)
 
 
-def hub_page(packs, base_url):
+def hub_page(packs, ws_packs, base_url):
+    def cards(ps):
+        return "".join(
+            f'<a class="card link" href="{p["id"]}.html"><h3>{ar(p["order"])}. {esc(p["title_ar"])}</h3>'
+            f'<p>{count(len(p["levels"]), "لغز واحد", "لغزان", "ألغاز", "لغزًا")}</p></a>' for p in ps)
     total = sum(len(p["levels"]) for p in packs)
-    cards = []
-    for p in packs:
-        cards.append(f'<a class="card link" href="{p["id"]}.html"><h3>{ar(p["order"])}. {esc(p["title_ar"])}</h3>'
-                     f'<p>{count(len(p["levels"]), "لغز واحد", "لغزان", "ألغاز", "لغزًا")}</p></a>')
+    ws_total = sum(len(p["levels"]) for p in ws_packs)
     body = f"""
-  <p class="lead">علقت في لغز؟ اختر الحزمة ثم رقم اللغز. كل تعريف مخفيّ حتى تضغط عليه، فلن ترى إلا الإجابة التي تحتاجها.</p>
-  <div class="grid">{''.join(cards)}</div>
+  <p class="lead">علقت في لغز؟ اختر طريقة اللعب، ثم الحزمة، ثم رقم اللغز. كل إجابة مخفيّة حتى تضغط على تعريفها، فلن ترى إلا ما تحتاجه.</p>
+  <h2 id="crossword">كلمات متقاطعة <span class="muted">({count(total, "لغز واحد", "لغزان", "ألغاز", "لغزًا")})</span></h2>
+  <div class="grid">{cards(packs)}</div>
+  <h2 id="wordsearch">كلمات مخفية <span class="muted">({count(ws_total, "لغز واحد", "لغزان", "ألغاز", "لغزًا")})</span></h2>
+  <p class="muted">ابحث عن الكلمة في مربع الحروف وارسم خطًا فوقها: أفقيًا أو عموديًا أو قطريًا.</p>
+  <div class="grid">{cards(ws_packs)}</div>
 """
-    return page("answers/index.html", f"حلول ألغاز {APP} – {ar(total)} لغزًا في {ar(len(packs))} حزم",
-                f"إجابات كل ألغاز لعبة {APP} للكلمات المتقاطعة العربية: {ar(total)} لغزًا مرتّبة حسب الحزمة ورقم اللغز.",
+    return page("answers/index.html",
+                f"حلول ألغاز {APP} – الكلمات المتقاطعة والكلمات المخفية",
+                f"إجابات كل ألغاز لعبة {APP}: {count(total, 'لغز', 'لغزان', 'ألغاز', 'لغزًا')} كلمات متقاطعة و"
+                f"{count(ws_total, 'لغز', 'لغزان', 'ألغاز', 'لغزًا')} كلمات مخفية، مرتّبة حسب الحزمة ورقم اللغز.",
                 "حلول الألغاز", body, base_url=base_url)
+
+
+# ---------------------------------------------------------------- word search
+
+DIRECTION_AR = {(0, 1): "أفقي", (1, 0): "عمودي", (1, 1): "قطري", (1, -1): "قطري"}
+
+
+def load_wordsearch():
+    """Word-search levels exactly as the app builds them: compile and run the app's own
+    Swift generator (tools/export_wordsearch.swift). Falls back to the last export."""
+    app = os.path.join(ROOT, "app")
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            exe, out = os.path.join(tmp, "wsexport"), os.path.join(tmp, "ws.json")
+            sources = [os.path.join(app, "tools", "export_wordsearch.swift"),
+                       os.path.join(app, "Sources", "Models", "Content.swift")] + \
+                sorted(glob.glob(os.path.join(app, "Sources", "Game", "*.swift")))
+            subprocess.run(["swiftc", "-O", "-parse-as-library", *sources, "-o", exe],
+                           check=True, capture_output=True)
+            subprocess.run([exe, PACKS, out], check=True, capture_output=True)
+            shutil.copyfile(out, WS_CACHE)
+    except (OSError, subprocess.CalledProcessError) as e:
+        print(f"warning: word-search export failed ({e}); using {os.path.relpath(WS_CACHE, ROOT)}")
+    with open(WS_CACHE, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def ws_grid_html(level):
+    owner = {}
+    for i, e in enumerate(level["entries"]):
+        for r, c in e["cells"]:
+            owner.setdefault((r, c), i)
+    rows = []
+    for r, row in enumerate(level["grid"]):
+        tds = "".join(f'<td class="hit w{owner[(r, c)] % 8}">{esc(ch)}</td>' if (r, c) in owner
+                      else f"<td>{esc(ch)}</td>" for c, ch in enumerate(row))
+        rows.append(f"<tr>{tds}</tr>")
+    return f'<table class="xgrid ws" aria-label="مربع الحروف مع الكلمات ملوّنة">{"".join(rows)}</table>'
+
+
+def ws_level_page(pack, level, prev_id, next_id, base_url):
+    n = level["number"]
+    entries = level["entries"]
+    title = f"حل كلمات مخفية {ar(n)} – {pack['title_ar']} | {APP}"
+    clues = "، ".join(e["clue_ar"] for e in entries[:2])
+    description = (f"إجابات لغز الكلمات المخفية {ar(n)} من حزمة «{pack['title_ar']}» في لعبة {APP}: "
+                   f"{count(len(entries), 'كلمة', 'كلمتان', 'كلمات', 'كلمة')} في مربع "
+                   f"{ar(level['size'])}×{ar(level['size'])}، منها: {clues}.")
+    items = []
+    for i, e in enumerate(entries):
+        cat = CATEGORIES.get(e.get("category"), "معلومات عامة")
+        d = DIRECTION_AR[(e["dr"], e["dc"])]
+        items.append(
+            f'<details class="clue"><summary><span class="tag"><i class="dot w{i % 8}"></i>{d} · {cat} · '
+            f'{count(len(letters(e["answer"])), "حرف واحد", "حرفان", "حروف", "حرفًا")}</span>'
+            f'{esc(e["clue_ar"])}</summary><p class="answer">{esc(e["answer"])}</p></details>')
+    pager = []
+    if prev_id:
+        pager.append(f'<a href="{prev_id}.html" rel="prev">→ اللغز السابق</a>')
+    pager.append(f'<a href="{pack["id"]}.html">كل ألغاز الحزمة</a>')
+    if next_id:
+        pager.append(f'<a href="{next_id}.html" rel="next">اللغز التالي ←</a>')
+    body = f"""
+  <p class="crumbs"><a href="index.html#wordsearch">حلول الكلمات المخفية</a> ‹ <a href="{pack['id']}.html">{esc(pack['title_ar'])}</a> ‹ اللغز {ar(n)}</p>
+  <p class="lead">اضغط على التعريف لترى إجابته واتجاهها، أو افتح المربع كاملًا في الأسفل، كل كلمة بلون.</p>
+  {''.join(items)}
+  <details class="full"><summary>أظهر المربع محلولًا</summary>{ws_grid_html(level)}</details>
+  <nav class="pager" aria-label="التنقل بين الألغاز">{' '.join(pager)}</nav>
+"""
+    return page(f"answers/{level['id']}.html", title, description,
+                f"حل الكلمات المخفية {ar(n)}", body, base_url=base_url)
+
+
+def ws_pack_page(pack, base_url):
+    rows = []
+    for lv in pack["levels"]:
+        rows.append(f'<li><a href="{lv["id"]}.html"><strong>اللغز {ar(lv["number"])}</strong></a>'
+                    f' <span class="muted">— {count(len(lv["entries"]), "كلمة", "كلمتان", "كلمات", "كلمة")}، '
+                    f'أولها: {esc(lv["entries"][0]["clue_ar"])}</span></li>')
+    n_lv = count(len(pack["levels"]), "لغز واحد", "لغزان", "ألغاز", "لغزًا")
+    title = f"حلول الكلمات المخفية – {pack['title_ar']} – {n_lv} | {APP}"
+    description = (f"إجابات كل ألغاز الكلمات المخفية في حزمة «{pack['title_ar']}» (الحزمة {ar(pack['order'])}) "
+                   f"في لعبة {APP}: {n_lv} مع التعريفات واتجاه كل كلمة.")
+    body = f"""
+  <p class="crumbs"><a href="index.html#wordsearch">حلول الكلمات المخفية</a> ‹ {esc(pack['title_ar'])}</p>
+  <ol class="levels">{''.join(rows)}</ol>
+"""
+    return page(f"answers/{pack['id']}.html", title, description,
+                f"كلمات مخفية: {esc(pack['title_ar'])}", body, base_url=base_url)
 
 
 # ---------------------------------------------------------------- main
@@ -287,7 +386,15 @@ def main():
         write(f"answers/{lv['id']}.html", level_page(p, lv, prev_id, next_id, args.base_url))
     for p in packs:
         write(f"answers/{p['id']}.html", pack_page(p, args.base_url))
-    write("answers/index.html", hub_page(packs, args.base_url))
+    ws_packs = load_wordsearch()
+    ws_levels = [(p, lv) for p in ws_packs for lv in p["levels"]]
+    for i, (p, lv) in enumerate(ws_levels):
+        prev_id = ws_levels[i - 1][1]["id"] if i > 0 else None
+        next_id = ws_levels[i + 1][1]["id"] if i + 1 < len(ws_levels) else None
+        write(f"answers/{lv['id']}.html", ws_level_page(p, lv, prev_id, next_id, args.base_url))
+    for p in ws_packs:
+        write(f"answers/{p['id']}.html", ws_pack_page(p, args.base_url))
+    write("answers/index.html", hub_page(packs, ws_packs, args.base_url))
 
     if args.base_url:
         base = args.base_url.rstrip("/")
@@ -296,7 +403,7 @@ def main():
                              f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}\n</urlset>\n')
         write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n")
 
-    print(f"site/: {len(written)} pages ({len(all_levels)} puzzle answer pages)"
+    print(f"site/: {len(written)} pages ({len(all_levels)} crossword + {len(ws_levels)} word-search answer pages)"
           + ("" if args.base_url else " — no --base-url, so no canonical links or sitemap"))
 
 
