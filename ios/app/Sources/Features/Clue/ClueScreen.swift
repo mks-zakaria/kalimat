@@ -4,13 +4,17 @@ import SwiftUI
 struct ClueScreen: View {
     @Bindable var engine: GameEngine
     @Environment(\.dismiss) private var dismiss
+    @Environment(ProgressStore.self) private var store
     @State private var shake = 0
+    @State private var noCoins = false
 
     var body: some View {
         if let entry = engine.current {
             VStack(spacing: Theme.S.xl) {
+                HStack { Spacer(); CoinBadge(coins: store.coins) }
+                    .padding(.top, Theme.S.lg)
+
                 ClueCard(category: categoryName(entry.category), clue: entry.clueAr)
-                    .padding(.top, Theme.S.xl)
 
                 AnswerSlots(letters: engine.typed, states: slotStates)
                     .modifier(Shake(amount: CGFloat(shake)))
@@ -30,10 +34,27 @@ struct ClueScreen: View {
 
                 Spacer(minLength: 0)
 
+                HStack(spacing: Theme.S.sm) {
+                    Button { useHint(ProgressStore.revealCost) { engine.revealLetter() } } label: {
+                        HintButton(kind: .reveal, cost: ProgressStore.revealCost, enabled: engine.canReveal)
+                    }
+                    .disabled(!engine.canReveal)
+                    Button { useHint(ProgressStore.removeCost) { engine.removeDecoy() } } label: {
+                        HintButton(kind: .remove, cost: ProgressStore.removeCost, enabled: engine.canRemoveDecoy)
+                    }
+                    .disabled(!engine.canRemoveDecoy)
+                }
+                .buttonStyle(.plain)
+
                 bank
             }
             .padding(Theme.S.lg)
             .background(Theme.C.bg.ignoresSafeArea())
+            .alert("رصيدك من العملات لا يكفي", isPresented: $noCoins) {
+                Button("حسنًا", role: .cancel) {}
+            } message: {
+                Text("حل ألغازًا أخرى بدون مساعدة لتجمع المزيد.")
+            }
             .onChange(of: engine.lastWrong) { _, wrong in
                 if wrong { withAnimation(.default) { shake += 1 } }
             }
@@ -41,6 +62,11 @@ struct ClueScreen: View {
                 if done { Task { try? await Task.sleep(for: .milliseconds(600)); dismiss() } }
             }
         }
+    }
+
+    private func useHint(_ cost: Int, _ action: () -> Void) {
+        guard store.spend(cost) else { noCoins = true; return }
+        action()
     }
 
     private var bank: some View {
@@ -68,7 +94,8 @@ struct ClueScreen: View {
     private var slotStates: [SlotState] {
         engine.typed.indices.map { i in
             if engine.currentSolved { return .solved }
-            if engine.isLocked(i) { return .revealed }
+            if engine.isRevealed(i) { return .revealed }
+            if engine.isLocked(i) { return .solved }
             if engine.lastWrong { return .wrong }
             return engine.typed[i] == nil ? .empty : .typed
         }

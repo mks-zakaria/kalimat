@@ -49,6 +49,40 @@ struct Check {
             }
             print(level.id, "ok,", level.entries.count, "words")
         }
+        // hints, stars and save/restore on level 1
+        let l = pack.levels[0]
+        let g = GameEngine(level: l)
+        var saved: LevelProgress?
+        g.onProgress = { saved = $0 }
+        let e = l.entries[0]
+        g.open(e)
+        let decoysBefore = g.bank.filter { $0.isDecoy && !$0.removed }.count
+        g.removeDecoy()
+        expect(g.bank.filter { $0.isDecoy && !$0.removed }.count == decoysBefore - 1, "remove decoy hides one")
+        expect(g.bank.filter { !$0.isDecoy }.count == e.answer.count, "answer letters never removed")
+        g.revealLetter()
+        expect(g.isRevealed(0) && g.typed[0] == e.letters[0], "reveal fills first letter")
+        expect(g.bank.filter { $0.isDecoy && $0.removed }.count == 1, "removed decoy stays removed after reveal")
+        expect(g.hintsUsed == 2, "hints counted")
+        expect(saved?.revealed.count == 1, "reveal saved")
+        // restore mid-level
+        let r = GameEngine(level: l, saved: saved)
+        expect(r.revealed.count == 1 && r.hintsUsed == 2, "restore keeps reveal + hints")
+        r.open(e)
+        expect(r.typed[0] == e.letters[0] && r.isLocked(0), "restored letter is locked in place")
+        // finish with reveals only -> 1 star
+        for x in l.entries { r.open(x); while !r.currentSolved { r.revealLetter() } }
+        expect(r.isComplete && r.stars == 1, "many hints -> 1 star")
+        let clean = GameEngine(level: l)
+        for x in l.entries where !clean.solved.contains(x.id) {
+            clean.open(x)
+            for i in x.letters.indices where !clean.isLocked(i) { clean.tapKey(clean.bank.first { $0.letter == x.letters[i] && !$0.used }!) }
+        }
+        expect(clean.stars == 3, "no hints -> 3 stars")
+        // json round trip
+        let json = try JSONEncoder().encode(r.snapshot)
+        expect((try? JSONDecoder().decode(LevelProgress.self, from: json)) != nil, "progress json round trip")
+
         print(fails == 0 ? "ALL PASS" : "\(fails) FAILED")
         exit(fails == 0 ? 0 : 1)
     }

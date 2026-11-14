@@ -7,3 +7,8 @@
 | S04 board | 2026-11-14 | partial (M0) | stars header, hint-revealed state wiring, save | cell sizing for 3×3 to 9×9 grids |
 | S05 clue | 2026-11-14 | partial (M0) | hint buttons, coins, share, picture clues | — |
 | device run | 2026-11-14 | blocked | Xcode 26.6 has the iOS 26.5 SDK but not the iOS 26.5 platform component, so xcodebuild finds no destinations | needs `xcodebuild -downloadPlatform iOS` (multi-GB), user approval pending |
+| S01 home | 2026-11-14 | done | — | — |
+| S02 packs / S03 levels | 2026-11-14 | done | — | unlock rules decided here (sequential levels, pack after previous pack) |
+| S04 + S06 | 2026-11-14 | done (M1) | iCloud sync (M3) | restoring an engine from saved progress without losing the save callback |
+| S05 hints + coins | 2026-11-14 | done (M1) | rewarded ad for coins, S07 store (M2) | keeping removed decoys removed after a reveal rebuilds the bank |
+| checks | 2026-11-14 | — | — | `swiftc -typecheck -sdk iphoneos` compiles the app without the missing platform component |

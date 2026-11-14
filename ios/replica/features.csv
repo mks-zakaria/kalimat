@@ -6,11 +6,11 @@ Picture clues (flags maps objects),clue,must,yes,no,S05; public-domain or own im
 Letter bank with answer letters plus decoys,input,must,yes,yes,"S05; 12 keys, seeded per word"
 Answer checked as you type,input,must,yes,partial,Wasla listing; checked when the word is full; wrong = shake + clear
 Solved letters fill crossing words,board,must,yes,yes,core mechanic
-Hint: reveal one letter,hints,must,yes,no,إكشف حرف
-Hint: remove a wrong letter from the bank,hints,must,yes,no,إحذف حرف
-Coins wallet and spending,economy,must,yes,no,header counter
-Groups of levels with 0-3 stars,progress,must,yes,no,S02 S03
-Progress saved per cell offline,progress,must,yes,no,reviews: lost levels after reinstall
+Hint: reveal one letter,hints,must,yes,yes,إكشف حرف; 20 coins
+Hint: remove a wrong letter from the bank,hints,must,yes,yes,إحذف حرف; 10 coins; never removes answer letters
+Coins wallet and spending,economy,must,yes,yes,header counter; start 100; earning via rewarded ads in M2
+Groups of levels with 0-3 stars,progress,must,yes,yes,S02 S03; S02 S03; packs open when the previous is complete
+Progress saved per cell offline,progress,must,yes,yes,reviews: lost levels after reinstall; progress.json in Application Support; iCloud in M3
 Right-to-left Arabic layout with letter normalisation,quality,must,no,yes,reviews: correct answers rejected; normaliser shared by generator and app
 Readable Naskh font and large cells,quality,must,no,yes,reviews: bad font
 Rewarded ad for coins or a hint,economy,should,unknown,no,our main ad format
@@ -20,7 +20,7 @@ Coin packs IAP,economy,should,yes,no,+ button
 Share a clue to ask a friend,social,should,yes,no,S05 share icon
 Gulf content packs,content,should,no,no,reviews: no Gulf clues
 Report a wrong clue,content,should,no,no,reviews: wrong clues
-Level complete screen with stars,progress,should,unknown,no,S06 guessed
+Level complete screen with stars,progress,should,unknown,yes,S06 guessed; S06 inline card
 iCloud sync of progress,progress,should,no,no,reviews: progress lost
 Daily puzzle,engagement,could,no,no,
 Game Center leaderboard / challenge,engagement,could,no,no,reviews miss online challenge
