@@ -336,13 +336,15 @@ struct HintButton: View {
     var kind: Kind
     var cost: Int
     var enabled = true
+    var title: String? = nil
+    var icon: String? = nil
 
     var body: some View {
         Tile3D(face: [Theme.C.panel, Theme.C.tileShade], edge: Theme.C.tileEdge, radius: 20) {
             HStack(spacing: 6) {
-                Image(systemName: kind == .reveal ? "eye.fill" : "eraser.fill")
+                Image(systemName: icon ?? (kind == .reveal ? "eye.fill" : "eraser.fill"))
                     .foregroundStyle(kind == .reveal ? Theme.C.turquoise : Theme.C.button)
-                Text(kind == .reveal ? "كشف حرف" : "حذف حرف")
+                Text(title ?? (kind == .reveal ? "كشف حرف" : "حذف حرف"))
                     .font(Theme.arabic(15, .bold)).foregroundStyle(Theme.C.panelText)
                     .lineLimit(1).fixedSize()
                 CoinChip(amount: cost)

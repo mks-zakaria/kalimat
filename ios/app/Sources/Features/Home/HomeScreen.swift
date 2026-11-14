@@ -3,6 +3,7 @@ import SwiftUI
 /// S01 — scene, logo emblem, continue card, packs.
 struct HomeScreen: View {
     let packs: [Pack]
+    let wsPacks: [Pack]
     @Binding var path: [Route]
     @Environment(ProgressStore.self) private var store
     @State private var appear = false
@@ -43,12 +44,26 @@ struct HomeScreen: View {
                         Text("أنهيت كل الألغاز! انتظر مجموعات جديدة قريبًا")
                             .font(Theme.F.body).foregroundStyle(.white).multilineTextAlignment(.center)
                     }
-                    Button { path.append(.packs) } label: {
-                        GameButton(title: "المجموعات", icon: "square.grid.2x2.fill", style: .light, height: 52)
+                    HStack(spacing: Theme.S.md) {
+                        Button {
+                            if let (level, pack) = nextLevel(in: wsPacks, store: store) {
+                                path.append(.board(level, pack))
+                            } else {
+                                path.append(.packs(.wordSearch))
+                            }
+                        } label: {
+                            GameButton(title: "كلمات مخفية", icon: "scribble.variable", style: .primary, height: 52)
+                        }
+                        .buttonStyle(PressStyle())
+                        .disabled(wsPacks.isEmpty)
+                        .accessibilityIdentifier("home.wordsearch")
+                        Button { path.append(.packs(.crossword)) } label: {
+                            GameButton(title: "المجموعات", icon: "square.grid.2x2.fill", style: .light, height: 52)
+                        }
+                        .buttonStyle(PressStyle())
+                        .disabled(packs.isEmpty)
+                        .accessibilityIdentifier("home.packs")
                     }
-                    .buttonStyle(PressStyle())
-                    .disabled(packs.isEmpty)
-                    .accessibilityIdentifier("home.packs")
                 }
                 .padding(.horizontal, Theme.S.xl)
                 .padding(.bottom, Theme.S.xl)

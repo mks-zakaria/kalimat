@@ -64,6 +64,9 @@ targets:
       - path: UITests
       - path: Resources/Packs
         type: folder                  # tests read the real answers
+      # pure game logic, so word-search tests know where each word is hidden
+      - path: Sources/Models/Content.swift
+      - path: Sources/Game
     dependencies:
       - target: Crossword
     settings:

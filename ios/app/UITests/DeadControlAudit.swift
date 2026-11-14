@@ -16,6 +16,8 @@ final class DeadControlAudit: XCTestCase {
         Screen(name: "packs", args: ["-screen", "packs"]),
         Screen(name: "levels", args: ["-screen", "levels"]),
         Screen(name: "board", args: ["-screen", "level", "-level", "p01-001"]),
+        Screen(name: "wspacks", args: ["-screen", "wspacks"]),
+        Screen(name: "wordsearch", args: ["-screen", "level", "-level", "p01-w001"]),
     ]
 
     func launch(_ s: Screen) -> XCUIApplication {
@@ -72,7 +74,9 @@ final class DeadControlAudit: XCTestCase {
                 checked += 1
                 if before == after {
                     // Grid cells of the word already open, or of a solved word, legitimately do nothing new.
-                    if h.key.hasPrefix("cell.") { info.append("\(screen.name): \(h.key)") }
+                    // ...and so does a control that is already selected (the current mode tab,
+                    // the selected clue): choosing it again has nothing to change.
+                    if h.key.hasPrefix("cell.") || el.isSelected { info.append("\(screen.name): \(h.key)") }
                     else { dead.append("\(screen.name): \(h.key)") }
                 }
                 app.terminate()
@@ -81,7 +85,7 @@ final class DeadControlAudit: XCTestCase {
         let report = """
         Dead-control audit — \(checked) controls tapped on \(screens.count) screens
         DEAD (\(dead.count)): \(dead.joined(separator: ", "))
-        No-op grid cells, expected (\(info.count)): \(info.joined(separator: ", "))
+        Expected no-ops (open word cells, already-selected controls) (\(info.count)): \(info.joined(separator: ", "))
         Disabled at start (\(disabled.count)): \(disabled.joined(separator: ", "))
         """
         print("AUDIT-REPORT\n" + report + "\nAUDIT-END")
