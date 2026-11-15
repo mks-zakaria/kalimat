@@ -95,6 +95,60 @@ final class WordSearchUITests: XCTestCase {
         XCTAssertTrue(app.buttons["ws.hint.word"].isEnabled)
     }
 
+    func testIQAfterLevelAndOnHome() {
+        var app = launch(["-screen", "level", "-level", "p01-w001"])
+        let level = wsLevel("p01-w001")
+        let puzzle = WordSearchGenerator.make(level: level)
+        XCTAssertTrue(app.otherElements["ws.grid"].waitForExistence(timeout: 5))
+        for e in level.entries {
+            let cells = puzzle.placements[e.id]!.cells
+            cell(app, cells.first!).tap(); cell(app, cells.last!).tap()
+        }
+        XCTAssertTrue(app.buttons["complete.next"].waitForExistence(timeout: 5))
+        let lvl = app.buttons["iq.level"]
+        XCTAssertTrue(lvl.waitForExistence(timeout: 3), "level IQ on the complete card")
+        XCTAssertTrue(lvl.label.contains("أول معدّل"), "first level sets the IQ: \(lvl.label)")
+        sleep(3)                                                  // count + arrow animation
+        let shot0 = XCTAttachment(screenshot: app.screenshot()); shot0.name = "iq-counted"; shot0.lifetime = .keepAlways; add(shot0)
+        lvl.tap()                                                 // tap the IQ: explanation card
+        XCTAssertTrue(app.otherElements["iq.card"].waitForExistence(timeout: 3), "IQ card from the level card")
+        app.buttons["iq.close"].tap()
+        XCTAssertFalse(app.otherElements["iq.card"].waitForExistence(timeout: 1))
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "iq-complete"; shot.lifetime = .keepAlways; add(shot)
+
+        // home shows it, and explains it
+        app.terminate()
+        app = XCUIApplication(); app.launchArguments = ["-uitest"]; app.launch()
+        let button = app.buttons["home.iq"]
+        XCTAssertTrue(button.waitForExistence(timeout: 5))
+        XCTAssertTrue(button.label.contains("معدّل ذكائك"), button.label)
+        button.tap()
+        XCTAssertTrue(app.otherElements["iq.card"].waitForExistence(timeout: 3), "IQ card from home")
+        XCTAssertTrue(app.staticTexts["iq.value"].waitForExistence(timeout: 3))
+        let shot1 = XCTAttachment(screenshot: app.screenshot()); shot1.name = "iq-card"; shot1.lifetime = .keepAlways; add(shot1)
+        XCTAssertTrue(app.staticTexts["تقدير للمتعة مبني على سرعتك في الحل، وليس اختبار ذكاء علميًا."].exists, "not-a-real-IQ-test note")
+        app.buttons["iq.close"].tap()
+        XCTAssertFalse(app.otherElements["iq.card"].waitForExistence(timeout: 1))
+    }
+
+    func testOutOfCoinsShowsGameCard() {
+        let app = launch(["-screen", "level", "-level", "p01-w001"])
+        let level = wsLevel("p01-w001")
+        XCTAssertTrue(app.buttons["ws.hint.word"].waitForExistence(timeout: 5))
+        for i in 0..<5 {                                   // 5 × 20 = all 100 starting coins
+            app.buttons["ws.clue.\(i)"].tap()
+            app.buttons["ws.hint.word"].tap()
+        }
+        XCTAssertTrue(coins(app).contains("٠"), coins(app))
+        app.buttons["ws.clue.\(min(5, level.entries.count - 1))"].tap()
+        app.buttons["ws.hint.word"].tap()
+        XCTAssertTrue(app.otherElements["nocoins.card"].waitForExistence(timeout: 3), "game-styled card, not a system alert")
+        XCTAssertEqual(app.alerts.count, 0)
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "no-coins"; shot.lifetime = .keepAlways; add(shot)
+        app.buttons["nocoins.close"].tap()
+        XCTAssertFalse(app.otherElements["nocoins.card"].waitForExistence(timeout: 1))
+    }
+
     func testHomeAndPacksReachWordSearch() {
         let app = launch([])
         app.buttons["home.wordsearch"].tap()

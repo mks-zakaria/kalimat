@@ -24,6 +24,7 @@ struct HomeScreen: View {
                 Emblem()
                     .scaleEffect(appear ? 1 : 0.8)
                     .opacity(appear ? 1 : 0)
+                IQButton()
                 Spacer(minLength: 0)
 
                 VStack(spacing: Theme.S.md) {

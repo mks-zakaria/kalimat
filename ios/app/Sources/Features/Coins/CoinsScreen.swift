@@ -128,3 +128,90 @@ struct Toast: ViewModifier {
 extension View {
     func toast(_ message: Binding<String?>) -> some View { modifier(Toast(message: message)) }
 }
+
+// MARK: - Out of coins
+
+extension View {
+    /// The game-styled "not enough coins" card (replaces the system alert, whose buttons took
+    /// the app's red tint). Fades in over the screen, no sheet slide.
+    func noCoinsCard(isPresented: Binding<Bool>) -> some View {
+        fullScreenCover(isPresented: isPresented) {
+            NoCoinsCard(isPresented: isPresented).presentationBackground(.clear)
+        }
+        .transaction { if isPresented.wrappedValue { $0.disablesAnimations = true } }
+    }
+}
+
+struct NoCoinsCard: View {
+    @Binding var isPresented: Bool
+    @Environment(ProgressStore.self) private var store
+    @State private var ads = AdService.shared
+    @State private var appear = false
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(appear ? 0.55 : 0).ignoresSafeArea()
+                .onTapGesture { close() }
+                .accessibilityHidden(true)
+
+            VStack(spacing: Theme.S.md) {
+                CoinIcon(size: 64)
+                Text("رصيدك من العملات لا يكفي")
+                    .font(Theme.F.title).foregroundStyle(Theme.C.panelText)
+                Text("أنهِ الألغاز لتربح عملات: ٥ لكل لغز و١٠ إذا حصلت على ٣ نجوم.")
+                    .font(Theme.F.body).foregroundStyle(Theme.C.panelMuted)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if ads.canRequestAds {
+                    Button {
+                        var t = Transaction(); t.disablesAnimations = true
+                        withTransaction(t) { isPresented = false }
+                        // let the card go away first: an ad can't present over a closing cover
+                        Task { @MainActor [ads, store] in
+                            try? await Task.sleep(for: .milliseconds(400))
+                            ads.showRewarded {
+                                Task { @MainActor in
+                                    store.earn(AdService.rewardCoins)
+                                    SoundService.shared.play(.coin)
+                                }
+                            }
+                        }
+                    } label: {
+                        GameButton(title: ads.rewardedReady ? "شاهد إعلانًا واربح \(arNum(AdService.rewardCoins))" : "جارٍ تجهيز الإعلان…",
+                                   icon: "play.rectangle.fill", style: .gold, height: 54)
+                    }
+                    .buttonStyle(PressStyle())
+                    .disabled(!ads.rewardedReady)
+                    .opacity(ads.rewardedReady ? 1 : 0.6)
+                    .accessibilityIdentifier("nocoins.watch")
+                }
+
+                Button { close() } label: { GameButton(title: "حسنًا", style: .light, height: 50) }
+                    .buttonStyle(PressStyle())
+                    .accessibilityIdentifier("nocoins.close")
+            }
+            .padding(Theme.S.xl)
+            .background(Theme.C.panel, in: RoundedRectangle(cornerRadius: 28))
+            .overlay(RoundedRectangle(cornerRadius: 28).stroke(Theme.C.gold, lineWidth: 3))
+            .shadow(color: .black.opacity(0.35), radius: 24, y: 12)
+            .padding(Theme.S.xl)
+            .scaleEffect(appear ? 1 : 0.8)
+            .opacity(appear ? 1 : 0)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("nocoins.card")
+        }
+        .environment(\.layoutDirection, .rightToLeft)
+        .onAppear { withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) { appear = true } }
+    }
+
+    private func close() {
+        SoundService.shared.play(.tap)
+        withAnimation(.easeIn(duration: 0.18)) { appear = false }
+        Task {
+            try? await Task.sleep(for: .milliseconds(180))
+            var t = Transaction(); t.disablesAnimations = true
+            withTransaction(t) { isPresented = false }
+        }
+    }
+}

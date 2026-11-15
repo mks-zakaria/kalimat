@@ -26,7 +26,7 @@ final class AdService: NSObject {
         static let rewarded = "ca-app-pub-3940256099942544/1712485313"
         static let interstitial = "ca-app-pub-3940256099942544/4411468910"
     }
-    static let rewardCoins = 25
+    static let rewardCoins = 50
     static let interstitialEveryLevels = 3
     static let interstitialMinSeconds: TimeInterval = 180
     static let firstInterstitialAfterLevel = 3
@@ -161,8 +161,14 @@ final class AdService: NSObject {
 }
 
 extension AdService: FullScreenContentDelegate {
+    // The solve clock (Game/IQ.swift) pauses while an ad covers the screen.
+    nonisolated func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
+        Task { @MainActor in NotificationCenter.default.post(name: .fullScreenAdWillPresent, object: nil) }
+    }
+
     nonisolated func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         Task { @MainActor in
+            NotificationCenter.default.post(name: .fullScreenAdDidDismiss, object: nil)
             if ad is RewardedAd {
                 self.onRewardedClosed?(); self.onRewardedClosed = nil
                 self.loadRewarded()
@@ -174,6 +180,7 @@ extension AdService: FullScreenContentDelegate {
 
     nonisolated func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         Task { @MainActor in
+            NotificationCenter.default.post(name: .fullScreenAdDidDismiss, object: nil)
             if ad is RewardedAd { self.loadRewarded() } else { self.loadInterstitial() }
         }
     }

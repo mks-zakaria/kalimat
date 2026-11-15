@@ -15,6 +15,8 @@ struct SaveFile: Codable {
     var coins = ProgressStore.startingCoins
     var processedTransactions: [String] = []
     var settings = Settings()
+    var iq: Double?                 // overall IQ score (see Game/IQ.swift)
+    var iqLevels = 0                // first completions it is based on
 
     init() {}
 
@@ -28,6 +30,8 @@ struct SaveFile: Codable {
         coins = try c.decodeIfPresent(Int.self, forKey: .coins) ?? ProgressStore.startingCoins
         processedTransactions = try c.decodeIfPresent([String].self, forKey: .processedTransactions) ?? []
         settings = try c.decodeIfPresent(Settings.self, forKey: .settings) ?? Settings()
+        iq = try c.decodeIfPresent(Double.self, forKey: .iq)
+        iqLevels = try c.decodeIfPresent(Int.self, forKey: .iqLevels) ?? 0
     }
 }
 
@@ -67,6 +71,8 @@ final class ProgressStore {
         if let old = file.levels[levelId] {
             p.completedAt = old.completedAt ?? p.completedAt
             p.stars = max(old.stars, p.stars)
+            p.elapsed = old.elapsed          // engines don't track time; the clock does
+            p.iq = old.iq
         }
         file.levels[levelId] = p
         file.currentLevelId = levelId
@@ -87,6 +93,40 @@ final class ProgressStore {
 
     func solvedCount(_ pack: Pack) -> Int { pack.levels.filter { isComplete($0.id) }.count }
     func totalStars(_ pack: Pack) -> Int { pack.levels.reduce(0) { $0 + stars(for: $1.id) } }
+
+    // MARK: IQ
+
+    var iq: Int? { file.iq.map { Int($0.rounded()) } }
+    var bestLevelIQ: Int? { file.levels.values.compactMap(\.iq).max() }
+    /// Score of the most recently finished level that counted.
+    var lastLevelIQ: Int? {
+        file.levels.values.filter { $0.iq != nil }.max { ($0.completedAt ?? .distantPast) < ($1.completedAt ?? .distantPast) }?.iq
+    }
+
+    /// Adds active solving time to a level that is not finished yet.
+    func addTime(_ levelId: String, _ seconds: TimeInterval) {
+        guard seconds > 0, seconds < 6 * 3600 else { return }      // ignore clock jumps
+        var p = file.levels[levelId] ?? LevelProgress()
+        guard p.iq == nil else { return }
+        p.elapsed += seconds
+        file.levels[levelId] = p
+        persist()
+    }
+
+    /// Scores a finished level and updates the overall IQ — first completion only.
+    func recordIQ(_ levelId: String, expected: Double, hints: Int) -> IQResult {
+        let before = iq
+        guard var p = file.levels[levelId], p.iq == nil else {
+            return IQResult(level: file.levels[levelId]?.iq ?? 100, before: before, after: before ?? 100, counted: false)
+        }
+        let score = IQ.levelScore(expected: expected, actual: p.elapsed, hints: hints)
+        p.iq = score
+        file.levels[levelId] = p
+        file.iq = IQ.updated(global: file.iq, count: file.iqLevels, with: score)
+        file.iqLevels += 1
+        persist()
+        return IQResult(level: score, before: before, after: iq ?? score, counted: true)
+    }
 
     // MARK: settings
 

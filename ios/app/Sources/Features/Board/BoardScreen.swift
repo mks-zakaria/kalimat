@@ -14,6 +14,7 @@ struct BoardScreen: View {
     @State private var showComplete = false
     @State private var reward = 0
     @State private var alreadyDone = false      // replays earn no coins
+    @State private var iqResult: IQResult?
     private let levelAtStart: Level
 
     init(level: Level, pack: Pack, path: Binding<[Route]>) {
@@ -49,7 +50,7 @@ struct BoardScreen: View {
             }
 
             if showComplete {
-                LevelComplete(stars: engine.stars, reward: reward, next: nextInPack) { next in
+                LevelComplete(stars: engine.stars, reward: reward, iq: iqResult, next: nextInPack) { next in
                     path.removeLast()
                     if let next { path.append(.board(next, pack)) }
                     // between levels only, and only if the frequency rules allow it
@@ -61,22 +62,9 @@ struct BoardScreen: View {
         .toolbar(.hidden, for: .navigationBar)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: engine.current?.id)
         .animation(.easeOut(duration: 0.3), value: showComplete)
-        .alert("رصيدك من العملات لا يكفي", isPresented: $noCoins) {
-            if AdService.shared.rewardedReady {
-                Button("شاهد إعلانًا واربح \(arNum(AdService.rewardCoins))") {
-                    AdService.shared.showRewarded {
-                        Task { @MainActor in
-                            store.earn(AdService.rewardCoins)
-                            SoundService.shared.play(.coin)
-                        }
-                    }
-                }
-            }
-            Button("حسنًا", role: .cancel) {}
-        } message: {
-            Text("أنهِ الألغاز لتربح عملات: ٥ لكل لغز و١٠ إذا حصلت على ٣ نجوم.")
-        }
+        .noCoinsCard(isPresented: $noCoins)
         .onAppear(perform: restore)
+        .solveTiming(levelId: levelAtStart.id, running: !engine.isComplete)
         .onChange(of: engine.lastWrong) { _, wrong in
             if wrong {
                 SoundService.shared.play(.wrong)
@@ -205,6 +193,8 @@ struct BoardScreen: View {
         Task {
             try? await Task.sleep(for: .milliseconds(500))
             if reward > 0 { store.earn(reward) }
+            iqResult = store.recordIQ(engine.level.id, expected: IQ.expectedSeconds(engine.level, mode: .crossword),
+                                      hints: engine.hintsUsed)
             let firstEverFinish = store.file.levels.values.filter { $0.completedAt != nil }.count <= 1
             showComplete = true
             if firstEverFinish {
@@ -286,6 +276,7 @@ struct Shake: GeometryEffect {
 struct LevelComplete: View {
     let stars: Int
     let reward: Int
+    var iq: IQResult? = nil
     let next: Level?
     let go: (Level?) -> Void
     @State private var shown = 0
@@ -318,6 +309,8 @@ struct LevelComplete: View {
 
                 Text(stars == 3 ? "حللت اللغز بدون أي مساعدة!" : "حلّه بمساعدات أقل لتنال ٣ نجوم")
                     .font(Theme.F.body).foregroundStyle(Theme.C.panelMuted)
+
+                if let iq { IQResultView(result: iq) }
 
                 if reward > 0 {
                     HStack(spacing: 6) {

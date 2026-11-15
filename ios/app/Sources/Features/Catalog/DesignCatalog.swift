@@ -45,7 +45,7 @@ struct DesignCatalog: View {
 
             HStack(spacing: Theme.S.md) {
                 PrimaryButton(title: "اللغز التالي")
-                PrimaryButton(title: "شاهد إعلانًا +٢٥", secondary: true)
+                PrimaryButton(title: "شاهد إعلانًا +٥٠", secondary: true)
             }
         }
         .padding(Theme.S.lg)

@@ -20,6 +20,29 @@ struct LevelProgress: Codable, Equatable {
     var hintsUsed = 0
     var stars = 0
     var completedAt: Date?
+    var elapsed: Double = 0                 // active solving seconds (SolveClock), kept by ProgressStore
+    var iq: Int?                            // this level's IQ score at its first completion
+
+    init(filled: [String: String] = [:], solved: [String] = [], revealed: [String] = [],
+         removedDecoys: [String: Int] = [:], hintsUsed: Int = 0, stars: Int = 0, completedAt: Date? = nil) {
+        self.filled = filled; self.solved = solved; self.revealed = revealed
+        self.removedDecoys = removedDecoys; self.hintsUsed = hintsUsed; self.stars = stars
+        self.completedAt = completedAt
+    }
+
+    /// Missing keys fall back to defaults, so saves from older versions still load.
+    init(from d: Decoder) throws {
+        let c = try d.container(keyedBy: CodingKeys.self)
+        filled = try c.decodeIfPresent([String: String].self, forKey: .filled) ?? [:]
+        solved = try c.decodeIfPresent([String].self, forKey: .solved) ?? []
+        revealed = try c.decodeIfPresent([String].self, forKey: .revealed) ?? []
+        removedDecoys = try c.decodeIfPresent([String: Int].self, forKey: .removedDecoys) ?? [:]
+        hintsUsed = try c.decodeIfPresent(Int.self, forKey: .hintsUsed) ?? 0
+        stars = try c.decodeIfPresent(Int.self, forKey: .stars) ?? 0
+        completedAt = try c.decodeIfPresent(Date.self, forKey: .completedAt)
+        elapsed = try c.decodeIfPresent(Double.self, forKey: .elapsed) ?? 0
+        iq = try c.decodeIfPresent(Int.self, forKey: .iq)
+    }
 }
 
 /// Rules for one level. No UI and no coins in here: callers check the wallet

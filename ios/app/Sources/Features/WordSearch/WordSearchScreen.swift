@@ -14,6 +14,7 @@ struct WordSearchScreen: View {
     @State private var reward = 0
     @State private var alreadyDone = false
     @State private var lastFound: String?
+    @State private var iqResult: IQResult?
     private let levelAtStart: Level
 
     init(level: Level, pack: Pack, path: Binding<[Route]>) {
@@ -48,7 +49,7 @@ struct WordSearchScreen: View {
             }
 
             if showComplete {
-                LevelComplete(stars: engine.stars, reward: reward, next: nextInPack) { next in
+                LevelComplete(stars: engine.stars, reward: reward, iq: iqResult, next: nextInPack) { next in
                     path.removeLast()
                     if let next { path.append(.board(next, pack)) }
                     AdService.shared.levelFinished(levelNumber: engine.level.number, adsRemoved: false)
@@ -58,22 +59,9 @@ struct WordSearchScreen: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .animation(.easeOut(duration: 0.3), value: showComplete)
-        .alert("رصيدك من العملات لا يكفي", isPresented: $noCoins) {
-            if AdService.shared.rewardedReady {
-                Button("شاهد إعلانًا واربح \(arNum(AdService.rewardCoins))") {
-                    AdService.shared.showRewarded {
-                        Task { @MainActor in
-                            store.earn(AdService.rewardCoins)
-                            SoundService.shared.play(.coin)
-                        }
-                    }
-                }
-            }
-            Button("حسنًا", role: .cancel) {}
-        } message: {
-            Text("أنهِ الألغاز لتربح عملات: ٥ لكل لغز و١٠ إذا حصلت على ٣ نجوم.")
-        }
+        .noCoinsCard(isPresented: $noCoins)
         .onAppear(perform: restore)
+        .solveTiming(levelId: levelAtStart.id, running: !engine.isComplete)
     }
 
     // MARK: dock (hints + clues)
@@ -218,6 +206,9 @@ struct WordSearchScreen: View {
         Task {
             try? await Task.sleep(for: .milliseconds(500))
             if reward > 0 { store.earn(reward) }
+            iqResult = store.recordIQ(engine.level.id,
+                                      expected: IQ.expectedSeconds(engine.level, mode: .wordSearch, gridSize: engine.puzzle.size),
+                                      hints: engine.hintsUsed)
             let firstEverFinish = store.file.levels.values.filter { $0.completedAt != nil }.count <= 1
             showComplete = true
             if firstEverFinish {
