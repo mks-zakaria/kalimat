@@ -15,8 +15,9 @@ v1.0.0 (1) · iOS 18+ · iPhone only · primary language Arabic (ar-SA), English
 | Listing text ar-SA + en-US (`listing.json`) | ✅ all fields within limits (NFC code points), no keyword repeats name/subtitle |
 | App icon 1024², no alpha | ✅ |
 | Rating prompt | ✅ 8th / 30th / 80th finished level, once per version |
-| **Real AdMob app + ad units + GDPR message** | ⏳ needs Chrome (AdMob console) |
-| **`app-ads.txt`** on https://kalimat-web.vercel.app/app-ads.txt | ⏳ needs the AdMob publisher id |
+| Real AdMob app + ad units | ✅ app `ca-app-pub-4306191597700064~4043802655`; rewarded-coins `/6791199584`, between-levels `/4339316123` (release builds only; debug keeps Google demo units) |
+| GDPR / US-states message in AdMob Privacy & messaging (no IDFA explainer) | ⏳ owner, in the AdMob console |
+| `app-ads.txt` on https://kalimat-web.vercel.app/app-ads.txt | ✅ `google.com, pub-4306191597700064, DIRECT, f08c47fec0942fa0` |
 | **App record in App Store Connect** | ⏳ needs Chrome (no API for creating apps) |
 | **App Privacy questionnaire + Publish** | ⏳ needs Chrome (no API) |
 | Release archive + upload | ⏳ after the real ad ids are in |

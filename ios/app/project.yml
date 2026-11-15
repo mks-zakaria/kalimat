@@ -35,7 +35,7 @@ targets:
         UIAppFonts: [NotoNaskhArabic.ttf]
         CFBundleDevelopmentRegion: ar
         ITSAppUsesNonExemptEncryption: false
-        GADApplicationIdentifier: ca-app-pub-3940256099942544~1458002511
+        GADApplicationIdentifier: ca-app-pub-4306191597700064~4043802655
         # Concrete purpose, matches what the app does (APP-STORE-REVIEW.md ⛔1)
         NSUserTrackingUsageDescription: "نستخدم هذا المعرّف لعرض إعلانات أكثر ملاءمة لك. اللعبة تعمل كاملة سواء سمحت أم لا."
         SKAdNetworkItems:

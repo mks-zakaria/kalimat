@@ -20,11 +20,18 @@ import Observation
 final class AdService: NSObject {
     static let shared = AdService()
 
-    // Google's published iOS demo units (developers.google.com/admob/ios/test-ads).
-    // Replace with the real units from the AdMob console before release.
+    // Release builds use the real AdMob units (app ca-app-pub-4306191597700064~4043802655).
+    // Debug builds — the developer's phone, simulators, UI tests — use Google's published demo
+    // units, so nobody on the team ever loads or taps a live ad (invalid traffic gets AdMob
+    // accounts suspended).
     enum Unit {
+        #if DEBUG
         static let rewarded = "ca-app-pub-3940256099942544/1712485313"
         static let interstitial = "ca-app-pub-3940256099942544/4411468910"
+        #else
+        static let rewarded = "ca-app-pub-4306191597700064/6791199584"        // rewarded-coins
+        static let interstitial = "ca-app-pub-4306191597700064/4339316123"    // between-levels
+        #endif
     }
     static let rewardCoins = 50
     static let interstitialEveryLevels = 3
