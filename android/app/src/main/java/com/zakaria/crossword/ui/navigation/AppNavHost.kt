@@ -8,6 +8,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import com.zakaria.crossword.ui.screens.HomeScreen
+import com.zakaria.crossword.ui.screens.LevelsScreen
+import com.zakaria.crossword.ui.screens.PacksScreen
 
 /** Shows the screen on top of the back stack; the system back gesture pops it. */
 @Composable
@@ -21,7 +23,9 @@ fun AppNavHost(nav: Navigator) {
     ) { route ->
         when (route) {
             Route.Home -> HomeScreen(nav)
-            is Route.Packs, is Route.Levels, is Route.Board -> Box {}   // added in the next steps
+            is Route.Packs -> PacksScreen(nav, route.mode)
+            is Route.Levels -> LevelsScreen(nav, route.pack)
+            is Route.Board -> Box {}   // added in the next steps
         }
     }
 }
