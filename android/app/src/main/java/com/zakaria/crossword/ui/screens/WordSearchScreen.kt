@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zakaria.crossword.LocalApp
 import com.zakaria.crossword.data.ProgressStore
+import com.zakaria.crossword.game.IQ
 import com.zakaria.crossword.game.WordSearchEngine
 import com.zakaria.crossword.game.WordSearchGenerator
 import com.zakaria.crossword.model.CellPos
@@ -56,6 +57,8 @@ import com.zakaria.crossword.ui.components.TopBarActions
 import com.zakaria.crossword.ui.components.pressable
 import com.zakaria.crossword.ui.components.rememberShake
 import com.zakaria.crossword.ui.components.rememberToast
+import com.zakaria.crossword.ui.iq.IQResultBox
+import com.zakaria.crossword.ui.iq.SolveTiming
 import com.zakaria.crossword.ui.navigation.Navigator
 import com.zakaria.crossword.ui.navigation.Route
 import com.zakaria.crossword.ui.theme.ArabicText
@@ -97,7 +100,9 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
                 lastFound = result.entry.id
                 scope.launch { delay(400); lastFound = null }
                 if (selectedId == result.entry.id) selectedId = null
-                if (engine.isComplete) finish.finish(engine.stars)
+                if (engine.isComplete) {
+                    finish.finish(engine.stars, engine.hintsUsed, IQ.expectedSeconds(level, GameMode.WordSearch, engine.puzzle.size))
+                }
             }
             WordSearchEngine.Result.Wrong -> {
                 Sounds.play(Sound.Wrong)
@@ -117,6 +122,8 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
         Sounds.play(Sound.Hint)
         action()
     }
+
+    SolveTiming(level.id, running = !engine.isComplete)
 
     Box(Modifier.fillMaxSize()) {
         SceneBackground(SceneMood.forPack(pack.order), duneHeight = 0.22f)
@@ -176,7 +183,7 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
             LevelComplete(
                 stars = engine.stars, reward = finish.reward, next = nextLevel(pack, level),
                 onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
-            )
+            ) { finish.iq?.let { IQResultBox(it) } }
         }
         Toast(toast)
     }

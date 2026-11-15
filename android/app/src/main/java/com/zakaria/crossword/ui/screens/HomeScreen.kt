@@ -55,6 +55,7 @@ import com.zakaria.crossword.ui.components.Pill
 import com.zakaria.crossword.ui.components.SceneBackground
 import com.zakaria.crossword.ui.components.SceneMood
 import com.zakaria.crossword.ui.components.TopBarActions
+import com.zakaria.crossword.ui.iq.IQButton
 import com.zakaria.crossword.ui.navigation.Navigator
 import com.zakaria.crossword.ui.navigation.Route
 import com.zakaria.crossword.ui.theme.ArabicText
@@ -88,6 +89,7 @@ fun HomeScreen(nav: Navigator) {
             }
             Spacer(Modifier.weight(1f))
             Emblem()
+            IQButton()
             Spacer(Modifier.weight(1f))
 
             Column(

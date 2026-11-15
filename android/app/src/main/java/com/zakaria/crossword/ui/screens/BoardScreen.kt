@@ -26,8 +26,10 @@ import com.zakaria.crossword.LocalApp
 import com.zakaria.crossword.data.ProgressStore
 import com.zakaria.crossword.game.BankKey
 import com.zakaria.crossword.game.GameEngine
+import com.zakaria.crossword.game.IQ
 import com.zakaria.crossword.model.CellPos
 import com.zakaria.crossword.model.Entry
+import com.zakaria.crossword.model.GameMode
 import com.zakaria.crossword.model.Level
 import com.zakaria.crossword.model.Pack
 import com.zakaria.crossword.sound.Sound
@@ -49,6 +51,8 @@ import com.zakaria.crossword.ui.components.Toast
 import com.zakaria.crossword.ui.components.TopBarActions
 import com.zakaria.crossword.ui.components.rememberShake
 import com.zakaria.crossword.ui.components.rememberToast
+import com.zakaria.crossword.ui.iq.IQResultBox
+import com.zakaria.crossword.ui.iq.SolveTiming
 import com.zakaria.crossword.ui.navigation.Navigator
 import com.zakaria.crossword.ui.navigation.Route
 import com.zakaria.crossword.ui.theme.Space
@@ -86,7 +90,7 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
         if (engine.solved.size > solvedBefore) {
             Sounds.play(Sound.Correct)
             if (engine.isComplete) {
-                finish.finish(engine.stars)
+                finish.finish(engine.stars, engine.hintsUsed, IQ.expectedSeconds(level, GameMode.Crossword))
             } else {
                 scope.launch {
                     delay(450)                                     // let the player see the word turn gold
@@ -125,6 +129,8 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
             engine.open(e)
         }
     }
+
+    SolveTiming(level.id, running = !engine.isComplete)
 
     Box(Modifier.fillMaxSize()) {
         SceneBackground(SceneMood.forPack(pack.order), duneHeight = 0.22f)
@@ -185,7 +191,7 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
             LevelComplete(
                 stars = engine.stars, reward = finish.reward, next = nextLevel(pack, level),
                 onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
-            )
+            ) { finish.iq?.let { IQResultBox(it) } }
         }
         Toast(toast)
     }
