@@ -10,4 +10,4 @@ xcodebuild test -project Crossword.xcodeproj -scheme Crossword -destination "id=
 grep -E "Test Case .* (passed|failed)|error: -|Executed" build/test.log | sed -E 's/^.*Test Case //' | tail -40
 sed -n "/AUDIT-REPORT/,/AUDIT-END/p" build/test.log | grep -v AUDIT || true
 # pass only if the overall total (the last "Executed" line) has no failures
-grep -E "Executed [0-9]+ tests?, with" build/test.log | tail -1 | grep -q "with 0 failures"
+grep -E "Executed [0-9]+ tests?, with" build/test.log | tail -1 | grep -qE "(with|and) 0 failures"
