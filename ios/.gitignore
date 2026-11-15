@@ -14,3 +14,4 @@ site/
 app/build-release/
 app/build-release.log
 app/build-*/
+__pycache__/
