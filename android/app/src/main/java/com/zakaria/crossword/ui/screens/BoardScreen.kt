@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +37,7 @@ import com.zakaria.crossword.model.Level
 import com.zakaria.crossword.model.Pack
 import com.zakaria.crossword.sound.Sound
 import com.zakaria.crossword.sound.Sounds
+import com.zakaria.crossword.ui.coins.NoCoinsCard
 import com.zakaria.crossword.ui.components.AnswerSlots
 import com.zakaria.crossword.ui.components.CellState
 import com.zakaria.crossword.ui.components.ClueCard
@@ -47,10 +51,8 @@ import com.zakaria.crossword.ui.components.SceneBackground
 import com.zakaria.crossword.ui.components.SceneMood
 import com.zakaria.crossword.ui.components.SceneTopBar
 import com.zakaria.crossword.ui.components.SlotState
-import com.zakaria.crossword.ui.components.Toast
 import com.zakaria.crossword.ui.components.TopBarActions
 import com.zakaria.crossword.ui.components.rememberShake
-import com.zakaria.crossword.ui.components.rememberToast
 import com.zakaria.crossword.ui.iq.IQResultBox
 import com.zakaria.crossword.ui.iq.SolveTiming
 import com.zakaria.crossword.ui.navigation.Navigator
@@ -69,7 +71,7 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
     val store = LocalApp.current.store
     val scope = rememberCoroutineScope()
     val shake = rememberShake()
-    val toast = rememberToast()
+    var noCoins by remember { mutableStateOf(false) }
 
     val engine = remember {
         GameEngine(level, store.progress(level.id)).apply { onProgress = { store.update(level.id, it) } }
@@ -110,7 +112,7 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
     fun useHint(cost: Int, sound: Sound, action: () -> Unit) {
         if (!store.spend(cost)) {
             Sounds.play(Sound.Wrong)
-            toast.value = "رصيدك من العملات لا يكفي"
+            noCoins = true
             return
         }
         Sounds.play(Sound.Coin)
@@ -193,8 +195,8 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
                 onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
             ) { finish.iq?.let { IQResultBox(it) } }
         }
-        Toast(toast)
     }
+    if (noCoins) NoCoinsCard(onClose = { noCoins = false })
 }
 
 /** The twelve keys, in two rows of six. */

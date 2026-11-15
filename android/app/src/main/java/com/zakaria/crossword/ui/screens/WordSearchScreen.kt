@@ -43,6 +43,7 @@ import com.zakaria.crossword.model.Level
 import com.zakaria.crossword.model.Pack
 import com.zakaria.crossword.sound.Sound
 import com.zakaria.crossword.sound.Sounds
+import com.zakaria.crossword.ui.coins.NoCoinsCard
 import com.zakaria.crossword.ui.components.Category
 import com.zakaria.crossword.ui.components.Dock
 import com.zakaria.crossword.ui.components.GameIcon
@@ -52,11 +53,9 @@ import com.zakaria.crossword.ui.components.RevealHintButton
 import com.zakaria.crossword.ui.components.SceneBackground
 import com.zakaria.crossword.ui.components.SceneMood
 import com.zakaria.crossword.ui.components.SceneTopBar
-import com.zakaria.crossword.ui.components.Toast
 import com.zakaria.crossword.ui.components.TopBarActions
 import com.zakaria.crossword.ui.components.pressable
 import com.zakaria.crossword.ui.components.rememberShake
-import com.zakaria.crossword.ui.components.rememberToast
 import com.zakaria.crossword.ui.iq.IQResultBox
 import com.zakaria.crossword.ui.iq.SolveTiming
 import com.zakaria.crossword.ui.navigation.Navigator
@@ -79,7 +78,7 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
     val store = LocalApp.current.store
     val scope = rememberCoroutineScope()
     val shake = rememberShake()
-    val toast = rememberToast()
+    var noCoins by remember { mutableStateOf(false) }
 
     val engine = remember {
         WordSearchEngine(level, store.progress(level.id)).apply { onProgress = { store.update(level.id, it) } }
@@ -115,7 +114,7 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
     fun useHint(cost: Int, action: () -> Unit) {
         if (!store.spend(cost)) {
             Sounds.play(Sound.Wrong)
-            toast.value = "رصيدك من العملات لا يكفي"
+            noCoins = true
             return
         }
         Sounds.play(Sound.Coin)
@@ -185,8 +184,8 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
                 onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
             ) { finish.iq?.let { IQResultBox(it) } }
         }
-        Toast(toast)
     }
+    if (noCoins) NoCoinsCard(onClose = { noCoins = false })
 }
 
 /** One clue in the list. Tap it to aim the hints at it; found words are struck through. */
