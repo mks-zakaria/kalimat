@@ -33,9 +33,11 @@ android {
         compose = true
         buildConfig = true
     }
-    // Puzzles and the Arabic font are shared with the iOS app: read them from its folders, never copy them.
+    // Puzzles, the Arabic font and the sounds are shared with the iOS app:
+    // read them from its folders, never copy them.
     sourceSets["main"].assets.directories.add("../../app/Resources/Packs")
     sourceSets["main"].assets.directories.add("../../app/Resources/Fonts")
+    sourceSets["main"].assets.directories.add("../../app/Resources/Sounds")
 }
 
 dependencies {

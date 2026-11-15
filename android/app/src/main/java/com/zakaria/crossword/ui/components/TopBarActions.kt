@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.zakaria.crossword.LocalApp
+import com.zakaria.crossword.sound.Sound
+import com.zakaria.crossword.sound.Sounds
 import com.zakaria.crossword.ui.theme.Space
 
 /** End of every top bar (left in Arabic): sound on/off and the coin counter. */
@@ -23,7 +25,11 @@ fun TopBarActions() {
             RoundIconButton(
                 icon = if (store.soundOn) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
                 label = if (store.soundOn) "الصوت يعمل، اضغط للكتم" else "الصوت مكتوم، اضغط للتشغيل",
-                onClick = { store.soundOn = !store.soundOn },
+                onClick = {
+                    store.soundOn = !store.soundOn
+                    Sounds.enabled = store.soundOn
+                    Sounds.play(Sound.Tap)             // audible only when turning sound on
+                },
             )
         }
         CoinBadge(store.coins)

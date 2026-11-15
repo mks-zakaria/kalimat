@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.sp
 import com.zakaria.crossword.LocalApp
 import com.zakaria.crossword.model.GameMode
 import com.zakaria.crossword.model.Pack
+import com.zakaria.crossword.sound.Sound
+import com.zakaria.crossword.sound.Sounds
 import com.zakaria.crossword.ui.components.GameIcon
 import com.zakaria.crossword.ui.components.ProgressBar
 import com.zakaria.crossword.ui.components.SceneBackground
@@ -69,7 +71,7 @@ fun PacksScreen(nav: Navigator, startMode: GameMode) {
         SceneBackground(SceneMood.Night, duneHeight = 0.2f)
         Column(Modifier.fillMaxSize().safeDrawingPadding()) {
             SceneTopBar("المجموعات", onBack = nav::pop) { TopBarActions() }
-            ModePicker(mode, onChange = { mode = it }, modifier = Modifier.padding(horizontal = Space.lg).padding(top = Space.sm))
+            ModePicker(mode, onChange = { Sounds.play(Sound.Tap); mode = it }, modifier = Modifier.padding(horizontal = Space.lg).padding(top = Space.sm))
             LazyColumn(
                 contentPadding = PaddingValues(Space.lg),
                 verticalArrangement = Arrangement.spacedBy(Space.lg),
@@ -80,7 +82,10 @@ fun PacksScreen(nav: Navigator, startMode: GameMode) {
                         pack, solved = store.solvedCount(pack), stars = store.totalStars(pack), locked = !open,
                         modifier = Modifier.pressable {
                             if (open) nav.push(Route.Levels(pack))
-                            else toast.value = "أكمل المجموعة السابقة لفتح هذه المجموعة"
+                            else {
+                                Sounds.play(Sound.Wrong)
+                                toast.value = "أكمل المجموعة السابقة لفتح هذه المجموعة"
+                            }
                         },
                     )
                 }

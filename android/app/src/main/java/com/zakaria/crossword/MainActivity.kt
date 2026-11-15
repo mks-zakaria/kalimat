@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.zakaria.crossword.data.ContentStore
 import com.zakaria.crossword.data.ProgressStore
 import com.zakaria.crossword.game.WordSearchContent
+import com.zakaria.crossword.sound.Sounds
 import com.zakaria.crossword.ui.navigation.AppNavHost
 import com.zakaria.crossword.ui.navigation.Navigator
 import com.zakaria.crossword.ui.theme.Fonts
@@ -32,6 +33,9 @@ class MainActivity : ComponentActivity() {
             wsPacks = WordSearchContent.packs(packs),            // regrouped once, deterministically
             store = ProgressStore(File(filesDir, "progress.json"), BuildConfig.VERSION_NAME),
         )
+
+        Sounds.init(this)
+        Sounds.enabled = app.store.soundOn
 
         setContent {
             val nav = remember { Navigator() }

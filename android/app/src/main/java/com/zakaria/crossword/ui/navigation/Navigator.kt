@@ -4,6 +4,8 @@ import androidx.compose.runtime.mutableStateListOf
 import com.zakaria.crossword.model.GameMode
 import com.zakaria.crossword.model.Level
 import com.zakaria.crossword.model.Pack
+import com.zakaria.crossword.sound.Sound
+import com.zakaria.crossword.sound.Sounds
 
 /** Every screen of the app. */
 sealed interface Route {
@@ -21,6 +23,7 @@ class Navigator {
     val canGoBack: Boolean get() = stack.size > 1
 
     fun push(route: Route) {
+        Sounds.play(Sound.Open)
         stack.add(route)
     }
 

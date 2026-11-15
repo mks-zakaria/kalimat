@@ -25,6 +25,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zakaria.crossword.LocalApp
 import com.zakaria.crossword.model.Pack
+import com.zakaria.crossword.sound.Sound
+import com.zakaria.crossword.sound.Sounds
 import com.zakaria.crossword.ui.components.GameIcon
 import com.zakaria.crossword.ui.components.LevelMedallion
 import com.zakaria.crossword.ui.components.MedallionState
@@ -87,7 +89,10 @@ fun LevelsScreen(nav: Navigator, pack: Pack) {
                             .semantics { contentDescription = "لغز ${arNum(level.number)}" }
                             .pressable {
                                 if (unlocked) nav.push(Route.Board(level, pack))
-                                else toast.value = "أكمل اللغز السابق أولًا"
+                                else {
+                                    Sounds.play(Sound.Wrong)
+                                    toast.value = "أكمل اللغز السابق أولًا"
+                                }
                             },
                     )
                 }
