@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the website into site/ from site-src/ and the app's puzzle packs.
+"""Build the website into ../kalimat-web/ (the web repo, next to this one) from site-src/ and the app's puzzle packs.
 
     python3 tools/build_site.py [--base-url https://example.com/kalimat]
 
@@ -20,7 +20,7 @@ import argparse, glob, html, json, os, re, shutil, subprocess, tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "site-src")
-OUT = os.path.join(ROOT, "site")
+OUT = os.path.join(os.path.dirname(ROOT), "kalimat-web")   # sibling repo: kalimat/kalimat-web
 PACKS = os.path.join(ROOT, "app", "Resources", "Packs")
 WS_CACHE = os.path.join(SRC, "wordsearch.json")   # last export, used when swiftc is unavailable
 
@@ -347,8 +347,10 @@ def main():
     ap.add_argument("--base-url", default=os.environ.get("SITE_BASE_URL", "https://kalimat-web.vercel.app"))
     args = ap.parse_args()
 
-    # site/ is its own git repo (the web repo deployed on Vercel): clear everything but .git.
-    os.makedirs(OUT, exist_ok=True)
+    # kalimat-web is its own git repo (deployed on Vercel): clear everything but .git.
+    # Refuse to run if it is missing, so a wrong path never empties another folder.
+    if not os.path.isdir(os.path.join(OUT, ".git")):
+        raise SystemExit(f"{OUT} is not the kalimat-web git repo: clone it next to kalimat-ios first.")
     for name in os.listdir(OUT):
         if name == ".git":
             continue
@@ -403,7 +405,7 @@ def main():
                              f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}\n</urlset>\n')
         write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n")
 
-    print(f"site/: {len(written)} pages ({len(all_levels)} crossword + {len(ws_levels)} word-search answer pages)"
+    print(f"kalimat-web/: {len(written)} pages ({len(all_levels)} crossword + {len(ws_levels)} word-search answer pages)"
           + ("" if args.base_url else " — no --base-url, so no canonical links or sitemap"))
 
 
