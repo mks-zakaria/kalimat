@@ -22,7 +22,10 @@ v1.0.0 (1) · iOS 18+ · iPhone only · primary language Arabic (ar-SA), English
 | **App Privacy questionnaire + Publish** | ⏳ needs Chrome (no API) |
 | Release build 1.0.0 (1) | ✅ uploaded, VALID, attached to version 1.0.0 |
 | Listing, category, age rating, content rights, free, 175 territories, screenshots, review notes + contact | ✅ pushed via API (store/push_*.py) |
-| Submit for review | ⛔ only with the owner's explicit go |
+| App Privacy | ✅ published: tracking = Device ID + Advertising Data; Device ID linked |
+| AdMob GDPR + US-states messages | ✅ published, no IDFA explainer |
+| Creative assets (header + search, ar/en) | ✅ placed via API (`store/push_creative.py`) |
+| **Submitted for review** | ✅ 2026-11-15 17:09 UTC, submission 3ec2dc93-a9eb-4dfb-92c7-9f54d8922c8f, release: automatic after approval |
 
 ## Regenerate
 
