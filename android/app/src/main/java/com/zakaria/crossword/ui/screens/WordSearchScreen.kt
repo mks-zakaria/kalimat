@@ -181,7 +181,10 @@ fun WordSearchScreen(nav: Navigator, level: Level, pack: Pack) {
         if (finish.showComplete) {
             LevelComplete(
                 stars = engine.stars, reward = finish.reward, next = nextLevel(pack, level),
-                onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
+                onContinue = { next ->
+                    if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop()
+                    finish.leave(level.number)                   // between levels only
+                },
             ) { finish.iq?.let { IQResultBox(it) } }
         }
     }

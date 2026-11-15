@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -192,7 +192,10 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
         if (finish.showComplete) {
             LevelComplete(
                 stars = engine.stars, reward = finish.reward, next = nextLevel(pack, level),
-                onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
+                onContinue = { next ->
+                    if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop()
+                    finish.leave(level.number)                   // between levels only
+                },
             ) { finish.iq?.let { IQResultBox(it) } }
         }
     }

@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import com.zakaria.crossword.ads.Ads
 import com.zakaria.crossword.data.ContentStore
 import com.zakaria.crossword.data.ProgressStore
 import com.zakaria.crossword.game.WordSearchContent
@@ -36,6 +37,8 @@ class MainActivity : ComponentActivity() {
 
         Sounds.init(this)
         Sounds.enabled = app.store.soundOn
+
+        Ads.start(this)                                       // consent form first, then ads
 
         setContent {
             val nav = remember { Navigator() }

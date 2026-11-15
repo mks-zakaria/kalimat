@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kalimat">
 
+        <!-- AdMob app id: Google's test app in debug builds, the real one in release (see build.gradle.kts). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
+
         <!-- Portrait only, like the iPhone app. -->
         <activity
             android:name=".MainActivity"
