@@ -32,8 +32,9 @@ android {
     buildFeatures {
         compose = true
     }
-    // The puzzles are shared with the iOS app: read them from its folder, never copy them.
+    // Puzzles and the Arabic font are shared with the iOS app: read them from its folders, never copy them.
     sourceSets["main"].assets.directories.add("../../app/Resources/Packs")
+    sourceSets["main"].assets.directories.add("../../app/Resources/Fonts")
 }
 
 dependencies {
@@ -45,6 +46,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
