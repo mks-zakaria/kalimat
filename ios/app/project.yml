@@ -23,6 +23,7 @@ targets:
       - path: Resources/Fonts
       - path: Resources/Sounds
       - path: Resources/Assets.xcassets
+      - path: Resources/PrivacyInfo.xcprivacy
     dependencies:
       - package: GoogleMobileAds
     info:
@@ -34,7 +35,6 @@ targets:
         UIAppFonts: [NotoNaskhArabic.ttf]
         CFBundleDevelopmentRegion: ar
         ITSAppUsesNonExemptEncryption: false
-        # Google's demo app ID (developers.google.com/admob/ios/test-ads) — replace before release
         GADApplicationIdentifier: ca-app-pub-3940256099942544~1458002511
         # Concrete purpose, matches what the app does (APP-STORE-REVIEW.md ⛔1)
         NSUserTrackingUsageDescription: "نستخدم هذا المعرّف لعرض إعلانات أكثر ملاءمة لك. اللعبة تعمل كاملة سواء سمحت أم لا."
@@ -47,9 +47,9 @@ targets:
         - CrosswordUITests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.zakaria.crossword   # placeholder until /replica-brand
+        PRODUCT_BUNDLE_IDENTIFIER: com.zakaria.crossword
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        MARKETING_VERSION: "0.1.0"
+        MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.0"
         DEVELOPMENT_TEAM: "JF83ACY9N9"

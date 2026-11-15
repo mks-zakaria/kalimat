@@ -1,0 +1,25 @@
+{
+ "ar-SA": {
+  "name": "كلمات متقاطعة: ألغاز وذكاء",
+  "subtitle": "كلمات مخفية ومعدّل ذكاء",
+  "keywords": "لغز,وصلة,حروف,تحدي,معلومات عامة,خليجي,ثقافة,تسلية,عقل,فصحى,بدون نت,عربي,سعودي,كويت,امارات,قطر",
+  "promotionalText": "ألغاز عربية بنكهة خليجية: ٢٥٠ لغزًا بين الكلمات المتقاطعة والكلمات المخفية، ومعدّل ذكاء يتحدّث بعد كل لغز حسب سرعتك.",
+  "description": "كلمات متقاطعة عربية بتعريفات من الخليج والعالم العربي، وطريقة ثانية للعب تبحث فيها عن الكلمة وترسم خطًا فوقها.\n\nطريقتان للعب\n• كلمات متقاطعة: اقرأ التعريف واختر الحروف لتكتب الكلمة في الشبكة، وعند حلها ينتقل اللغز تلقائيًا إلى الكلمة التالية.\n• كلمات مخفية: الكلمات مختبئة في مربع من الحروف أفقيًا وعموديًا وقطريًا. اقرأ التعريف ثم ارسم خطًا فوق الكلمة بإصبعك.\n\n٢٥٠ لغزًا في ٨ مجموعات\n١٣٥ لغز كلمات متقاطعة و١١٥ لغز كلمات مخفية، تتدرّج من السهل إلى تحدّي الخبراء: الخليج، الجغرافيا، الطبيعة، اللغة، الرياضة، التاريخ، الدين، والطعام.\n\nمعدّل ذكائك\nنقيس وقت حلّك لكل لغز جديد ونقارنه بالوقت المتوقع، فيتحدّث معدّلك بعد كل لغز ويرتفع كلما كنت أسرع. هو تقدير للمتعة وليس اختبار ذكاء علميًا.\n\nإملاء صحيح\nالهمزات بأشكالها والألف المقصورة كما تُكتب، دون تبسيط يُفسد الكلمة.\n\nمساعدات عند الحاجة\nاكشف حرفًا أو احذف حرفًا خاطئًا أو أظهر أول حرف من الكلمة المخفية، بعملات تكسبها من اللعب أو بمشاهدة إعلان تختار مشاهدته.\n\nبلا حساب وتعمل دون إنترنت\nلا تسجيل ولا بريد. تقدّمك محفوظ على جهازك، وكل الألغاز داخل اللعبة.\n\nاللعبة مجانية وتعرض إعلانات.",
+  "whatsNew": null
+ },
+ "en-US": {
+  "name": "Kalimat: Arabic Crossword",
+  "subtitle": "Word search & IQ in Arabic",
+  "keywords": "puzzle,brain,quiz,trivia,gulf,saudi,uae,kuwait,qatar,offline,letters,wordsearch,fusha,culture,game",
+  "promotionalText": "Arabic word puzzles with a Gulf flavour: 250 crosswords and word searches, and an IQ score that updates after every puzzle based on your speed.",
+  "description": "Arabic crosswords with clues from the Gulf and the wider Arab world, plus a second way to play where you find each word and draw a line over it. The game is entirely in Arabic.\n\nTWO WAYS TO PLAY\n• Crossword: read the clue, tap the letters to fill the word; solving it moves you straight to the next one.\n• Word search: words hide in a letter grid, across, down and diagonally. Read the clue and draw a line over the word.\n\n250 PUZZLES IN 8 PACKS\n135 crosswords and 115 word searches, from easy to expert: the Gulf, geography, nature, language, sport, history, faith and food.\n\nYOUR IQ SCORE\nEach new puzzle is timed and compared with an expected time, so your score updates after every puzzle and rises as you get faster. It is a score for fun, not a scientific IQ test.\n\nCORRECT SPELLING\nHamza forms and alif maqsura are kept exactly as written.\n\nHINTS WHEN YOU NEED THEM\nReveal a letter, remove a wrong one, or show the first letter of a hidden word, with coins you earn by playing or by choosing to watch an ad.\n\nNO ACCOUNT, WORKS OFFLINE\nNo sign-up, no email. Progress stays on your device and every puzzle is built in.\n\nFree, with ads.",
+  "whatsNew": null
+ },
+ "urls": {
+  "support": "https://kalimat-web.vercel.app/support.html",
+  "marketing": "https://kalimat-web.vercel.app/",
+  "privacy": "https://kalimat-web.vercel.app/privacy.html"
+ },
+ "copyright": "2026 Zakaria Makhkhas",
+ "category": {"primary": "GAMES", "primarySub1": "GAMES_WORD", "primarySub2": "GAMES_PUZZLE"}
+}

@@ -15,7 +15,7 @@ struct IconArt: View {
         let x0 = s / 2 + step               // column of the shared ل (rightmost)
         let y0 = s / 2 - step        // top row
         ZStack {
-            SceneBackground(mood: .sunset, duneHeight: 0.30, animated: false)
+            SceneBackground(mood: .sunset, duneHeight: 0.30, animated: false, pattern: false)
             RadialGradient(colors: [.clear, .black.opacity(0.30)], center: .center, startRadius: 320, endRadius: 740)
             ZStack {
                 ForEach(0..<3, id: \.self) { i in

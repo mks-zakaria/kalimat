@@ -344,7 +344,7 @@ def ws_pack_page(pack, base_url):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--base-url", default=os.environ.get("SITE_BASE_URL"))
+    ap.add_argument("--base-url", default=os.environ.get("SITE_BASE_URL", "https://kalimat-web.vercel.app"))
     args = ap.parse_args()
 
     # site/ is its own git repo (the web repo deployed on Vercel): clear everything but .git.

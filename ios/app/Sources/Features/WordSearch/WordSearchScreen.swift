@@ -1,3 +1,4 @@
+import StoreKit
 import SwiftUI
 
 /// S08 — word search: a square of letters on top, the clues below. Draw a straight line
@@ -6,6 +7,7 @@ struct WordSearchScreen: View {
     let pack: Pack
     @Binding var path: [Route]
     @Environment(ProgressStore.self) private var store
+    @Environment(\.requestReview) private var requestReview
     @State private var engine: WordSearchEngine
     @State private var selectedId: String?          // clue the hints apply to
     @State private var shake = 0
@@ -52,7 +54,7 @@ struct WordSearchScreen: View {
                 LevelComplete(stars: engine.stars, reward: reward, iq: iqResult, next: nextInPack) { next in
                     path.removeLast()
                     if let next { path.append(.board(next, pack)) }
-                    AdService.shared.levelFinished(levelNumber: engine.level.number, adsRemoved: false)
+                    AdService.shared.levelFinished(levelNumber: engine.level.number)
                 }
                 .transition(.opacity)
             }
@@ -220,6 +222,11 @@ struct WordSearchScreen: View {
             for _ in 0..<engine.stars {
                 try? await Task.sleep(for: .milliseconds(380))
                 SoundService.shared.play(.star)
+            }
+            // rating prompt: after real play only (8th / 30th / 80th level), once per version
+            if store.shouldAskForReview() {
+                try? await Task.sleep(for: .seconds(2))
+                requestReview()
             }
         }
     }

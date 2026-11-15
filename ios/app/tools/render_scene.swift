@@ -13,7 +13,7 @@ struct RenderScene {
         }
         .padding(12).background(Color.black)
         let r = ImageRenderer(content: art)
-        r.scale = 1
+        r.scale = CommandLine.arguments.count > 2 ? Double(CommandLine.arguments[2])! : 1
         guard let img = r.cgImage else { print("render failed"); exit(1) }
         try! NSBitmapImageRep(cgImage: img).representation(using: .png, properties: [:])!
             .write(to: URL(fileURLWithPath: CommandLine.arguments[1]))

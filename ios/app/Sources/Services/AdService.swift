@@ -136,9 +136,9 @@ final class AdService: NSObject {
 
     /// Call when the player leaves a finished level. Shows an interstitial only if the
     /// frequency rules allow it; otherwise does nothing.
-    func levelFinished(levelNumber: Int, adsRemoved: Bool) {
+    func levelFinished(levelNumber: Int) {
         levelsSinceInterstitial += 1
-        guard !adsRemoved, !isUITest,
+        guard !isUITest,
               levelNumber > Self.firstInterstitialAfterLevel,
               levelsSinceInterstitial >= Self.interstitialEveryLevels,
               Date().timeIntervalSince(lastInterstitial) >= Self.interstitialMinSeconds,

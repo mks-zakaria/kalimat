@@ -40,6 +40,8 @@ struct SceneBackground: View {
     /// 0...1 — how much of the height the dunes take.
     var duneHeight: CGFloat = 0.32
     var animated = true
+    /// Faint girih pattern in the upper sky (off for the app icon).
+    var pattern = true
     @State private var drift = false
 
     var body: some View {
@@ -50,10 +52,25 @@ struct SceneBackground: View {
 
                 if mood.hasStars { Stars().opacity(mood == .night ? 0.9 : 0.4) }
 
-                MoonPhaseArc(mood: mood, animated: animated)
+                if pattern {
+                    GirihSky(mood: mood)
+                        .frame(height: h * 0.6)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                }
 
-                // sun sitting on the horizon (half behind the dunes); at night the moon arc is the light
-                if mood != .night {
+                // sun sitting on the horizon (half behind the dunes) / crescent moon high in the night sky
+                if mood == .night {
+                    Circle()
+                        .fill(mood.sun)
+                        .frame(width: w * 0.16)
+                        .mask {
+                            Circle().frame(width: w * 0.16)
+                                .overlay(Circle().frame(width: w * 0.15).offset(x: w * 0.05, y: -w * 0.03).blendMode(.destinationOut))
+                                .compositingGroup()
+                        }
+                        .shadow(color: mood.sun.opacity(0.7), radius: 18)
+                        .position(x: w * 0.22, y: h * 0.16 + (drift ? -4 : 4))
+                } else {
                     Circle()
                         .fill(mood.sun)
                         .frame(width: w * 0.3)
@@ -146,99 +163,63 @@ struct Stars: View {
 }
 
 /// Tiled eight-point stars (two overlapping squares) — a classic geometric motif.
-/// The lunar cycle as one soft arc across the sky: thin crescent → half → gibbous → full
-/// (largest, in the middle) → back. Each moon shows its dark disk faintly and its lit part in
-/// warm moonlight; a faint orbit line ties them together.
-struct MoonPhaseArc: View {
+/// Faint girih "star and cross" pattern for the upper sky: eight-pointed stars (never six),
+/// each with an octagon at its heart and short bands to its neighbours, so the gaps read as
+/// crosses. Drawn as a carved-plaster relief: a light edge with a soft shadow under it.
+struct GirihPattern: Shape {
+    var cell: CGFloat = 58
+
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        let R = cell * 0.40, inner = R * 0.6, core = R * 0.3
+        var y = r.minY
+        while y < r.maxY + cell {
+            var x = r.minX
+            while x < r.maxX + cell {
+                let c = CGPoint(x: x, y: y)
+                // eight-pointed star outline: 16 vertices, tips on the axes and diagonals
+                var star = Path()
+                for k in 0..<16 {
+                    let a = CGFloat(k) * .pi / 8 - .pi / 2
+                    let rad = k % 2 == 0 ? R : inner
+                    let pt = CGPoint(x: c.x + cos(a) * rad, y: c.y + sin(a) * rad)
+                    k == 0 ? star.move(to: pt) : star.addLine(to: pt)
+                }
+                star.closeSubpath()
+                p.addPath(star)
+                // octagon at the heart
+                var oct = Path()
+                for k in 0..<8 {
+                    let a = CGFloat(k) * .pi / 4 + .pi / 8
+                    let pt = CGPoint(x: c.x + cos(a) * core, y: c.y + sin(a) * core)
+                    k == 0 ? oct.move(to: pt) : oct.addLine(to: pt)
+                }
+                oct.closeSubpath()
+                p.addPath(oct)
+                // bands to the right and lower neighbours (tip to tip)
+                p.move(to: CGPoint(x: c.x + R, y: c.y)); p.addLine(to: CGPoint(x: c.x + cell - R, y: c.y))
+                p.move(to: CGPoint(x: c.x, y: c.y + R)); p.addLine(to: CGPoint(x: c.x, y: c.y + cell - R))
+                x += cell
+            }
+            y += cell
+        }
+        return p
+    }
+}
+
+/// The girih pattern as faint relief over the upper sky, fading out toward the dunes.
+struct GirihSky: View {
     var mood: SceneMood
-    var animated = true
-    static let phases: [CGFloat] = [0.07, 0.16, 0.26, 0.37, 0.5, 0.63, 0.74, 0.84, 0.93]
-    @State private var glow = false
 
     var body: some View {
-        GeometryReader { g in
-            let w = g.size.width, h = g.size.height
-            let n = Self.phases.count
-            let top = h * 0.105, sag = h * 0.045
-            let point: (CGFloat) -> CGPoint = { u in
-                CGPoint(x: w * (0.09 + 0.82 * u), y: top + sag * pow(2 * u - 1, 2))
-            }
-            ZStack {
-                // orbit line
-                Path { p in
-                    for i in 0...40 {
-                        let pt = point(CGFloat(i) / 40)
-                        i == 0 ? p.move(to: pt) : p.addLine(to: pt)
-                    }
-                }
-                .stroke(Color.white.opacity(0.10 * strength), style: StrokeStyle(lineWidth: 1, dash: [2, 5]))
-
-                ForEach(0..<n, id: \.self) { i in
-                    let u = CGFloat(i) / CGFloat(n - 1)
-                    let phase = Self.phases[i]
-                    let fullness = 1 - abs(phase - 0.5) * 2                // 0 at the ends, 1 for the full moon
-                    let r = w * (0.019 + 0.018 * fullness)
-                    let c = point(u)
-                    ZStack {
-                        Circle().fill(Color.white.opacity(0.07 * strength))
-                        Circle().stroke(Color.white.opacity(0.14 * strength), lineWidth: 0.8)
-                        MoonLit(phase: phase)
-                            .fill(LinearGradient(colors: [Color(hex: 0xFFF8E1), Color(hex: 0xF6DFA8)],
-                                                 startPoint: .top, endPoint: .bottom))
-                            .opacity(0.75 * strength)
-                    }
-                    .frame(width: r * 2, height: r * 2)
-                    .shadow(color: Color(hex: 0xFFE9B0).opacity((phase == 0.5 && glow ? 0.9 : 0.45) * strength),
-                            radius: phase == 0.5 ? (glow ? 16 : 9) : 5)
-                    .position(c)
-                }
-            }
+        let light: Double = mood == .day ? 0.16 : 0.12
+        ZStack {
+            GirihPattern().stroke(Color.black.opacity(light * 0.9), lineWidth: 1.2).offset(x: 0.6, y: 1)
+            GirihPattern().stroke(Color.white.opacity(light), lineWidth: 1)
         }
+        .mask(LinearGradient(stops: [.init(color: .white, location: 0), .init(color: .white.opacity(0.8), location: 0.35),
+                                     .init(color: .clear, location: 1)],
+                             startPoint: .top, endPoint: .bottom))
         .allowsHitTesting(false)
-        .onAppear { if animated { withAnimation(.easeInOut(duration: 3.5).repeatForever()) { glow = true } } }
-    }
-
-    /// Moonlight is strongest at night, softest in daylight.
-    private var strength: Double {
-        switch mood {
-        case .night: 1
-        case .dawn, .sunset: 0.8
-        case .day: 0.55
-        }
-    }
-}
-
-/// The lit part of the moon for a phase, drawn in the unit square of its frame.
-struct MoonLit: Shape {
-    var phase: CGFloat
-    func path(in r: CGRect) -> Path {
-        MoonPhasesPattern.moon(center: CGPoint(x: r.midX, y: r.midY), radius: min(r.width, r.height) / 2, phase: phase)
-    }
-}
-
-enum MoonPhasesPattern {
-    /// Outline of the lit part of the moon. `phase` 0 = new, 0.25 = first quarter, 0.5 = full,
-    /// 0.75 = last quarter. The new moon is drawn as a plain circle so the rhythm stays visible.
-    static func moon(center c: CGPoint, radius r: CGFloat, phase: CGFloat) -> Path {
-        if phase == 0 || phase == 0.5 {
-            return Path(ellipseIn: CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r))
-        }
-        let waxing = phase < 0.5
-        let t = waxing ? phase : 1 - phase
-        let e = r * cos(2 * .pi * t)                // terminator: half an ellipse of width e
-        let side: CGFloat = waxing ? 1 : -1         // waxing lit on the right, waning on the left
-        var p = Path()
-        let steps = 24
-        for i in 0...steps {                        // limb: top → bottom along the lit edge
-            let a = -CGFloat.pi / 2 + CGFloat.pi * CGFloat(i) / CGFloat(steps)
-            let pt = CGPoint(x: c.x + side * r * cos(a), y: c.y + r * sin(a))
-            i == 0 ? p.move(to: pt) : p.addLine(to: pt)
-        }
-        for i in 0...steps {                        // terminator: bottom → top
-            let a = CGFloat.pi / 2 - CGFloat.pi * CGFloat(i) / CGFloat(steps)
-            p.addLine(to: CGPoint(x: c.x + side * e * cos(a), y: c.y + r * sin(a)))
-        }
-        p.closeSubpath()
-        return p
     }
 }

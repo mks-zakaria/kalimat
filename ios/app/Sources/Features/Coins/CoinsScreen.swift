@@ -63,6 +63,14 @@ struct CoinsSheet: View {
                     .font(Theme.F.caption).foregroundStyle(Theme.C.panelMuted)
                     .accessibilityIdentifier("coins.privacy")
             }
+            HStack(spacing: Theme.S.md) {
+                Link("سياسة الخصوصية", destination: AppLinks.privacy).accessibilityIdentifier("link.privacy")
+                Text("·").accessibilityHidden(true)
+                Link("الشروط العامة", destination: AppLinks.terms).accessibilityIdentifier("link.terms")
+                Text("·").accessibilityHidden(true)
+                Link("الدعم", destination: AppLinks.support).accessibilityIdentifier("link.support")
+            }
+            .font(Theme.F.caption).foregroundStyle(Theme.C.panelMuted)
         }
         .padding(Theme.S.xl)
         .background(Theme.C.panel.ignoresSafeArea())
@@ -214,4 +222,12 @@ struct NoCoinsCard: View {
             withTransaction(t) { isPresented = false }
         }
     }
+}
+
+/// The website's legal and support pages (site-src/, deployed on Vercel).
+enum AppLinks {
+    static let site = URL(string: "https://kalimat-web.vercel.app")!
+    static let privacy = URL(string: "https://kalimat-web.vercel.app/privacy.html")!
+    static let terms = URL(string: "https://kalimat-web.vercel.app/terms.html")!
+    static let support = URL(string: "https://kalimat-web.vercel.app/support.html")!
 }

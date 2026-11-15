@@ -67,7 +67,10 @@ struct RootView: View {
         }
         .tint(Theme.C.accent)
         #if DEBUG
-        .onAppear { DebugLaunch.apply(packs: packs, wsPacks: wsPacks, path: &path) }
+        .onAppear {
+            if ProcessInfo.processInfo.arguments.contains("-demo") { store.seedDemo(packs: packs, wsPacks: wsPacks) }
+            DebugLaunch.apply(packs: packs, wsPacks: wsPacks, path: &path)
+        }
         #endif
         .onChange(of: path) { old, new in
             if new.count > old.count { SoundService.shared.play(.open) }

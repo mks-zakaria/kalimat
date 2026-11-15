@@ -1,3 +1,4 @@
+import StoreKit
 import SwiftUI
 
 /// S04 + S05 on one screen: the crossword on top, the open word's clue,
@@ -8,6 +9,7 @@ struct BoardScreen: View {
     let pack: Pack
     @Binding var path: [Route]
     @Environment(ProgressStore.self) private var store
+    @Environment(\.requestReview) private var requestReview
     @State private var engine: GameEngine
     @State private var shake = 0
     @State private var noCoins = false
@@ -54,7 +56,7 @@ struct BoardScreen: View {
                     path.removeLast()
                     if let next { path.append(.board(next, pack)) }
                     // between levels only, and only if the frequency rules allow it
-                    AdService.shared.levelFinished(levelNumber: engine.level.number, adsRemoved: false)
+                    AdService.shared.levelFinished(levelNumber: engine.level.number)
                 }
                 .transition(.opacity)
             }
@@ -206,6 +208,11 @@ struct BoardScreen: View {
             for _ in 0..<engine.stars {
                 try? await Task.sleep(for: .milliseconds(380))
                 SoundService.shared.play(.star)
+            }
+            // rating prompt: after real play only (8th / 30th / 80th level), once per version
+            if store.shouldAskForReview() {
+                try? await Task.sleep(for: .seconds(2))
+                requestReview()
             }
         }
     }

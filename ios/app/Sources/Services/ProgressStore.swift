@@ -13,10 +13,10 @@ struct SaveFile: Codable {
     var currentLevelId: String?
     var levels: [String: LevelProgress] = [:]
     var coins = ProgressStore.startingCoins
-    var processedTransactions: [String] = []
     var settings = Settings()
     var iq: Double?                 // overall IQ score (see Game/IQ.swift)
     var iqLevels = 0                // first completions it is based on
+    var reviewAskedVersion: String? // app version the rating prompt was last shown for
 
     init() {}
 
@@ -28,10 +28,10 @@ struct SaveFile: Codable {
         currentLevelId = try c.decodeIfPresent(String.self, forKey: .currentLevelId)
         levels = try c.decodeIfPresent([String: LevelProgress].self, forKey: .levels) ?? [:]
         coins = try c.decodeIfPresent(Int.self, forKey: .coins) ?? ProgressStore.startingCoins
-        processedTransactions = try c.decodeIfPresent([String].self, forKey: .processedTransactions) ?? []
         settings = try c.decodeIfPresent(Settings.self, forKey: .settings) ?? Settings()
         iq = try c.decodeIfPresent(Double.self, forKey: .iq)
         iqLevels = try c.decodeIfPresent(Int.self, forKey: .iqLevels) ?? 0
+        reviewAskedVersion = try c.decodeIfPresent(String.self, forKey: .reviewAskedVersion)
     }
 }
 
@@ -128,6 +128,19 @@ final class ProgressStore {
         return IQResult(level: score, before: before, after: iq ?? score, counted: true)
     }
 
+    // MARK: rating prompt
+
+    /// Ask for a rating at most once per app version, only after real play: on the 8th,
+    /// 30th or 80th finished level. iOS itself also caps it at 3 prompts a year.
+    func shouldAskForReview() -> Bool {
+        let done = file.levels.values.filter { $0.completedAt != nil }.count
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
+        guard [8, 30, 80].contains(done), file.reviewAskedVersion != version else { return false }
+        file.reviewAskedVersion = version
+        persist()
+        return true
+    }
+
     // MARK: settings
 
     var soundOn: Bool {
@@ -167,3 +180,29 @@ extension JSONEncoder {
 extension JSONDecoder {
     static let iso: JSONDecoder = { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }()
 }
+
+#if DEBUG
+extension ProgressStore {
+    /// Store screenshots only (`-demo`, debug builds): a believable mid-game save — the first
+    /// levels of each mode solved, some coins, an IQ based on several levels.
+    func seedDemo(packs: [Pack], wsPacks: [Pack]) {
+        var f = SaveFile()
+        let stars = [3, 3, 2, 3, 3, 2, 3]
+        for (i, l) in packs[0].levels.prefix(5).enumerated() {
+            var p = LevelProgress(stars: stars[i], completedAt: Date().addingTimeInterval(Double(i - 20) * 3600))
+            p.solved = l.entries.map(\.id); p.iq = [112, 121, 109, 118, 124][i]; p.elapsed = 80
+            f.levels[l.id] = p
+        }
+        for (i, l) in wsPacks[0].levels.prefix(3).enumerated() {
+            var p = LevelProgress(stars: stars[i + 3], completedAt: Date().addingTimeInterval(Double(i - 10) * 3600))
+            p.solved = l.entries.map(\.id); p.iq = [116, 127, 113][i]; p.elapsed = 90
+            f.levels[l.id] = p
+        }
+        f.coins = 240
+        f.iq = 118
+        f.iqLevels = 8
+        file = f
+        persist()
+    }
+}
+#endif
