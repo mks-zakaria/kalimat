@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -31,11 +32,14 @@ android {
     buildFeatures {
         compose = true
     }
+    // The puzzles are shared with the iOS app: read them from its folder, never copy them.
+    sourceSets["main"].assets.directories.add("../../app/Resources/Packs")
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
