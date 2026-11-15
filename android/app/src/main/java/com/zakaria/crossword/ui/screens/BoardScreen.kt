@@ -16,12 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -74,28 +70,11 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
     val engine = remember {
         GameEngine(level, store.progress(level.id)).apply { onProgress = { store.update(level.id, it) } }
     }
-    val alreadyDone = remember { store.isComplete(level.id) }            // replays earn no coins
-    var showComplete by remember { mutableStateOf(engine.isComplete) }
-    var reward by remember { mutableIntStateOf(0) }
+    val finish = rememberLevelFinish(level.id)
 
     LaunchedEffect(Unit) {
-        if (!engine.isComplete) engine.nextUnsolved(null)?.let { engine.open(it) }
-    }
-
-    /** Coins, then stars and sounds, once the last word is solved. */
-    fun finish() {
-        reward = if (alreadyDone) 0 else if (engine.stars == 3) 10 else 5
-        scope.launch {
-            delay(500)
-            if (reward > 0) store.earn(reward)
-            showComplete = true
-            delay(300)
-            Sounds.play(Sound.Complete)
-            repeat(engine.stars) {
-                delay(380)
-                Sounds.play(Sound.Star)
-            }
-        }
+        if (engine.isComplete) finish.showComplete = true                 // opened a finished level
+        else engine.nextUnsolved(null)?.let { engine.open(it) }
     }
 
     /** Reacts to what a key, slot or hint just did. */
@@ -107,7 +86,7 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
         if (engine.solved.size > solvedBefore) {
             Sounds.play(Sound.Correct)
             if (engine.isComplete) {
-                finish()
+                finish.finish(engine.stars)
             } else {
                 scope.launch {
                     delay(450)                                     // let the player see the word turn gold
@@ -202,9 +181,9 @@ fun BoardScreen(nav: Navigator, level: Level, pack: Pack) {
             }
         }
 
-        if (showComplete) {
+        if (finish.showComplete) {
             LevelComplete(
-                stars = engine.stars, reward = reward, next = nextLevel(pack, level),
+                stars = engine.stars, reward = finish.reward, next = nextLevel(pack, level),
                 onContinue = { next -> if (next != null) nav.replaceTop(Route.Board(next, pack)) else nav.pop() },
             )
         }
@@ -233,8 +212,6 @@ private fun LetterKeys(engine: GameEngine, onKey: (BankKey) -> Unit) {
 }
 
 // ---- what the board shows, worked out from the engine ----
-
-private fun nextLevel(pack: Pack, level: Level): Level? = pack.levels.getOrNull(pack.levels.indexOf(level) + 1)
 
 /** Earned letters, plus the letters being typed for the open word. */
 private fun boardLetters(engine: GameEngine): Map<CellPos, String> {

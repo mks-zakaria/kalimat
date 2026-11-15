@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zakaria.crossword.model.Level
+import com.zakaria.crossword.model.Pack
 import com.zakaria.crossword.sound.Sound
 import com.zakaria.crossword.sound.Sounds
 import com.zakaria.crossword.ui.components.CoinIcon
@@ -48,6 +49,10 @@ import com.zakaria.crossword.ui.theme.Space
 import com.zakaria.crossword.ui.theme.TextSize
 import com.zakaria.crossword.ui.theme.arNum
 import kotlinx.coroutines.delay
+
+/** The level after [level] in its pack, or null after the last one. */
+fun nextLevel(pack: Pack, level: Level): Level? =
+    pack.levels.getOrNull(pack.levels.indexOf(level) + 1)
 
 /**
  * S06 — level complete: dimmed screen, confetti, banner, stars popping in one by one,
