@@ -31,6 +31,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     // Puzzles and the Arabic font are shared with the iOS app: read them from its folders, never copy them.
     sourceSets["main"].assets.directories.add("../../app/Resources/Packs")
