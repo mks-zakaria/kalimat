@@ -18,9 +18,10 @@ v1.0.0 (1) · iOS 18+ · iPhone only · primary language Arabic (ar-SA), English
 | Real AdMob app + ad units | ✅ app `ca-app-pub-4306191597700064~4043802655`; rewarded-coins `/6791199584`, between-levels `/4339316123` (release builds only; debug keeps Google demo units) |
 | GDPR / US-states message in AdMob Privacy & messaging (no IDFA explainer) | ⏳ owner, in the AdMob console |
 | `app-ads.txt` on https://kalimat-web.vercel.app/app-ads.txt | ✅ `google.com, pub-4306191597700064, DIRECT, f08c47fec0942fa0` |
-| **App record in App Store Connect** | ⏳ needs Chrome (no API for creating apps) |
+| App record in App Store Connect | ✅ app id 6835100780 (created by the owner on the web) |
 | **App Privacy questionnaire + Publish** | ⏳ needs Chrome (no API) |
-| Release archive + upload | ⏳ after the real ad ids are in |
+| Release build 1.0.0 (1) | ✅ uploaded, VALID, attached to version 1.0.0 |
+| Listing, category, age rating, content rights, free, 175 territories, screenshots, review notes + contact | ✅ pushed via API (store/push_*.py) |
 | Submit for review | ⛔ only with the owner's explicit go |
 
 ## Regenerate
@@ -97,4 +98,4 @@ Then press **Publish** at the top of the App Privacy page (saving only stores a 
 - Category: Games › Word (secondary Games › Puzzle). Price: free. Availability: all territories.
 - Age rating: no objectionable content; ads present. Expected 4+.
 - Copyright: 2026 Zakaria Makhkhas. Content rights: no third-party content (font under SIL OFL).
-- Review contact: name, **phone**, email — owner to provide.
+- Review contact: Zakaria Makhkhas, +212613145086, makhkhas.zakaria@gmail.com (saved).
