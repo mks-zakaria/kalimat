@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import com.zakaria.crossword.model.isWordSearch
+import com.zakaria.crossword.ui.screens.BoardScreen
 import com.zakaria.crossword.ui.screens.HomeScreen
 import com.zakaria.crossword.ui.screens.LevelsScreen
 import com.zakaria.crossword.ui.screens.PacksScreen
@@ -25,7 +27,9 @@ fun AppNavHost(nav: Navigator) {
             Route.Home -> HomeScreen(nav)
             is Route.Packs -> PacksScreen(nav, route.mode)
             is Route.Levels -> LevelsScreen(nav, route.pack)
-            is Route.Board -> Box {}   // added in the next steps
+            is Route.Board ->
+                if (route.pack.isWordSearch) Box {}                     // word search: next step
+                else BoardScreen(nav, route.level, route.pack)
         }
     }
 }
