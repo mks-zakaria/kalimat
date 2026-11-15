@@ -11,3 +11,6 @@ app/icon/preview*.png
 .claude/
 __pycache__/
 site/
+app/build-release/
+app/build-release.log
+app/build-*/
