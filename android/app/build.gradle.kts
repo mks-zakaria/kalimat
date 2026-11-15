@@ -48,18 +48,13 @@ android {
         compose = true
         buildConfig = true
     }
-    // Puzzles, the Arabic font and the sounds are shared with the iOS app:
-    // read them from its folders, never copy them.
-    sourceSets["main"].assets.directories.add("../../app/Resources/Packs")
-    sourceSets["main"].assets.directories.add("../../app/Resources/Fonts")
-    sourceSets["main"].assets.directories.add("../../app/Resources/Sounds")
 }
 
 // A release build without real AdMob ids would crash at launch: stop it with a clear message instead.
 val checkAdMobIds by tasks.registering {
     val missing = listOf(admobAppId, admobRewarded, admobInterstitial).any { it.isBlank() }
     doLast {
-        if (missing) throw GradleException("Fill in kalimat.admob.* in android/gradle.properties before a release build.")
+        if (missing) throw GradleException("Fill in kalimat.admob.* in gradle.properties before a release build.")
     }
 }
 tasks.matching { it.name == "preReleaseBuild" }.configureEach { dependsOn(checkAdMobIds) }

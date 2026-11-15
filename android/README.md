@@ -1,15 +1,14 @@
 # Kalimat for Android (كلمات)
 
-The Android version of the iOS game in `../app`, written in Kotlin with Jetpack Compose.
+The Android version of the iOS game (repo `mks-zakaria/kalimat-ios`), written in Kotlin with Jetpack Compose.
 Same puzzles, same rules, same look. The same seed gives the same letter bank and the same
 word-search grid on both platforms.
 
 ## Build and run
 
-Open the `android/` folder in Android Studio and press Run, or from a terminal:
+Open this folder in Android Studio and press Run, or from a terminal:
 
 ```sh
-cd android
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"   # Android Studio's JDK
 ./gradlew :app:installDebug          # build and install on the running emulator / phone
 ./gradlew :app:testDebugUnitTest     # 41 unit tests (game rules, save file, IQ, parity with iOS)
@@ -44,23 +43,25 @@ app/src/main/java/com/zakaria/crossword/
 ```
 
 Each Kotlin file starts with a comment saying what it is for, and most follow the Swift file
-of the same name in `../app/Sources`.
+of the same name in the iOS repo (`app/Sources`).
 
-## Shared with iOS (not copied)
+## Content copied from the iOS repo
 
-`app/build.gradle.kts` reads these straight from the iOS folders:
+These files in `app/src/main/assets/` are copies from `kalimat-ios/app/Resources/`.
+When the iOS ones change, copy them again:
 
-- `../app/Resources/Packs/*.json`: the puzzles
-- `../app/Resources/Fonts/NotoNaskhArabic.ttf`: the font
-- `../app/Resources/Sounds/*.wav`: the sounds
+- `p01.json` … `p08.json`: the puzzles (`Packs/`)
+- `NotoNaskhArabic.ttf` and its licence `OFL.txt` (`Fonts/`)
+- `*.wav`: the sounds (`Sounds/`)
 
 `app/src/test/resources/wordsearch-ios.json` was exported by the iOS code
 (`app/tools/export_wordsearch.swift`). `WordSearchTest` checks that every Android grid matches it.
-**After changing the packs or the word-search code, export it again**, or the test fails:
+**After changing the packs or the word-search code, export it again** from the iOS repo,
+or the test fails:
 
 ```sh
-cd app && swiftc -O -parse-as-library tools/export_wordsearch.swift Sources/Models/Content.swift \
-  Sources/Game/*.swift -o /tmp/wsexport && /tmp/wsexport Resources/Packs ../android/app/src/test/resources/wordsearch-ios.json
+cd kalimat-ios/app && swiftc -O -parse-as-library tools/export_wordsearch.swift Sources/Models/Content.swift \
+  Sources/Game/*.swift -o /tmp/wsexport && /tmp/wsexport Resources/Packs /path/to/kalimat-android/app/src/test/resources/wordsearch-ios.json
 ```
 
 ## Before the first Google Play release

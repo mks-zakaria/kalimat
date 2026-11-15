@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Bundled, read-only puzzle content. Same JSON as the iOS app (app/Resources/Packs/pNN.json).
+ * Bundled, read-only puzzle content. Same JSON as the iOS app (app/src/main/assets/pNN.json here).
  */
 @Serializable
 data class Pack(
