@@ -1,0 +1,40 @@
+{
+ "lang": "ar",
+ "clips": [
+  {
+   "file": "/Users/mks/projects/apps/kalimat/kalimat-ios/tools/promo/rec2/seg-006.mp4",
+   "t0": 0.5,
+   "t1": 14.3,
+   "speed": 2.6538461538461537,
+   "caption": "اقرأ التعريف واكتب الكلمة"
+  },
+  {
+   "file": "/Users/mks/projects/apps/kalimat/kalimat-ios/tools/promo/rec2/seg-008.mp4",
+   "t0": 0.5,
+   "t1": 16.2,
+   "speed": 3.019230769230769,
+   "caption": "كلمات متقاطعة بنكهة خليجية"
+  },
+  {
+   "file": "/Users/mks/projects/apps/kalimat/kalimat-ios/tools/promo/rec2/seg-011.mp4",
+   "t0": 0.3,
+   "t1": 4.8,
+   "speed": 1.0,
+   "caption": "ممتاز! ومعدل ذكائك يتحدّث بعد كل لغز"
+  },
+  {
+   "file": "/Users/mks/projects/apps/kalimat/kalimat-ios/tools/promo/rec2/seg-081.mp4",
+   "t0": 1.6,
+   "t1": 5.31,
+   "speed": 1.1,
+   "caption": "كلمات مخفية: ارسم خطًا فوق الكلمة"
+  },
+  {
+   "file": "/Users/mks/projects/apps/kalimat/kalimat-ios/tools/promo/rec2/seg-085.mp4",
+   "t0": 1.6,
+   "t1": 4.211666999999999,
+   "speed": 1.1,
+   "caption": "٢٥٠ لغزًا في ٨ مجموعات"
+  }
+ ]
+}
