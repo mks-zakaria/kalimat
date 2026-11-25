@@ -66,6 +66,7 @@ struct HomeScreen: View {
                         .accessibilityIdentifier("home.packs")
                     }
                 }
+                .readableWidth()
                 .padding(.horizontal, Theme.S.xl)
                 .padding(.bottom, Theme.S.xl)
             }

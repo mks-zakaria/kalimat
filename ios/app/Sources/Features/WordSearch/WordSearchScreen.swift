@@ -101,6 +101,7 @@ struct WordSearchScreen: View {
             }
             .frame(maxHeight: 260)
         }
+        .readableWidth()
         .padding(Theme.S.md)
         .padding(.bottom, Theme.S.sm)
         .background(

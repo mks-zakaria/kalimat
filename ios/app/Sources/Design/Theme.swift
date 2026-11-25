@@ -89,3 +89,12 @@ extension View {
             .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
     }
 }
+
+extension View {
+    /// Caps content at a comfortable reading width and centres it. A no-op on every iPhone
+    /// (all narrower than 720 pt); on iPad it stops buttons, clue cards and keys stretching
+    /// across a 13-inch screen.
+    func readableWidth(_ max: CGFloat = 720) -> some View {
+        frame(maxWidth: max).frame(maxWidth: .infinity)
+    }
+}

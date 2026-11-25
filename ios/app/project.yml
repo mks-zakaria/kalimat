@@ -32,6 +32,8 @@ targets:
         CFBundleDisplayName: "كلمات"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        # iPad (universal since 1.0.1 build 4): every orientation, as iPadOS windowing expects.
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         UIAppFonts: [NotoNaskhArabic.ttf]
         CFBundleDevelopmentRegion: ar
         ITSAppUsesNonExemptEncryption: false
@@ -50,12 +52,12 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.zakaria.crossword
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         MARKETING_VERSION: "1.0.1"
-        CURRENT_PROJECT_VERSION: "3"
+        CURRENT_PROJECT_VERSION: "4"
         SWIFT_VERSION: "5.0"
         DEVELOPMENT_TEAM: "JF83ACY9N9"
         CODE_SIGN_STYLE: Automatic
         # ⛔ APP-STORE-REVIEW.md §3: device family on the TARGET, not the project
-        TARGETED_DEVICE_FAMILY: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
 
   CrosswordUITests:
     type: bundle.ui-testing
@@ -74,5 +76,5 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.zakaria.crossword.uitests
         DEVELOPMENT_TEAM: "JF83ACY9N9"
         GENERATE_INFOPLIST_FILE: YES
-        TARGETED_DEVICE_FAMILY: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
         TEST_TARGET_NAME: Crossword

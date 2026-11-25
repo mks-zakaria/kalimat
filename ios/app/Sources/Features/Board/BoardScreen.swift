@@ -114,6 +114,7 @@ struct BoardScreen: View {
 
             keys
         }
+        .readableWidth()
         .padding(Theme.S.md)
         .padding(.bottom, Theme.S.sm)
         .background(

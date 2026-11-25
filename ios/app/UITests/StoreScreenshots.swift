@@ -19,8 +19,13 @@ final class StoreScreenshots: XCTestCase {
     }
 
     func shot(_ app: XCUIApplication, _ name: String) {
-        let a = XCTAttachment(screenshot: app.screenshot())
+        let image = app.screenshot()
+        let a = XCTAttachment(screenshot: image)
         a.name = name; a.lifetime = .keepAlways; add(a)
+        // Also as files when asked (simulator only): one folder per device for the store sets.
+        if let dir = ProcessInfo.processInfo.environment["KALIMAT_SHOTS_DIR"] {
+            try? image.pngRepresentation.write(to: URL(fileURLWithPath: dir).appendingPathComponent("\(name).png"))
+        }
     }
 
     func packs() -> [Pack] {
