@@ -1,0 +1,19 @@
+app/build/
+app/*.xcodeproj/
+*.xcresult
+.DS_Store
+replica/screens/
+app/build.log
+app/build-sim.log
+app/build-device/
+app/build-device.log
+app/icon/preview*.png
+.claude/
+__pycache__/
+app/build-release/
+app/build-release.log
+app/build-*/
+__pycache__/
+
+# promo recordings and rendered videos (large; regenerate with tools/promo)
+tools/promo/rec*/

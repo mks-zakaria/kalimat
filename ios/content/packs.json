@@ -1,0 +1,160 @@
+{
+ "_about": "Pack plan for tools/generate.py. weights = how often each category is picked; difficulty ramps from min to max across the pack; words ramp from words_min to words_max. fill: -1 = first pack (filled before anything), 0 = themed (generated first), 1 = mixed (generated from what is left).",
+ "packs": [
+  {
+   "id": "p01",
+   "title": "البداية",
+   "order": 1,
+   "levels": 20,
+   "words_min": 4,
+   "words_max": 6,
+   "diff": [
+    1,
+    1
+   ],
+   "weights": {
+    "gulf": 3,
+    "general": 3,
+    "nature": 2,
+    "geography": 1,
+    "language": 1
+   },
+   "fill": -1
+  },
+  {
+   "id": "p02",
+   "title": "نسيم الخليج",
+   "order": 2,
+   "levels": 20,
+   "words_min": 5,
+   "words_max": 7,
+   "diff": [
+    1,
+    2
+   ],
+   "weights": {
+    "gulf": 6,
+    "food": 1,
+    "geography": 1,
+    "general": 1,
+    "history": 1
+   },
+   "fill": 0
+  },
+  {
+   "id": "p03",
+   "title": "حول العالم",
+   "order": 3,
+   "levels": 20,
+   "words_min": 5,
+   "words_max": 7,
+   "diff": [
+    1,
+    2
+   ],
+   "weights": {
+    "geography": 6,
+    "history": 1,
+    "general": 1,
+    "nature": 1
+   },
+   "fill": 0
+  },
+  {
+   "id": "p04",
+   "title": "من الطبيعة",
+   "order": 4,
+   "levels": 20,
+   "words_min": 5,
+   "words_max": 7,
+   "diff": [
+    1,
+    2
+   ],
+   "weights": {
+    "nature": 5,
+    "science": 3,
+    "general": 1
+   },
+   "fill": 0
+  },
+  {
+   "id": "p05",
+   "title": "لغة الضاد",
+   "order": 5,
+   "levels": 20,
+   "words_min": 5,
+   "words_max": 7,
+   "diff": [
+    1,
+    2
+   ],
+   "weights": {
+    "language": 6,
+    "general": 2
+   },
+   "fill": 0
+  },
+  {
+   "id": "p06",
+   "title": "ملاعب وتاريخ",
+   "order": 6,
+   "levels": 20,
+   "words_min": 6,
+   "words_max": 8,
+   "diff": [
+    1,
+    3
+   ],
+   "weights": {
+    "sport": 4,
+    "history": 4,
+    "geography": 1
+   },
+   "fill": 0
+  },
+  {
+   "id": "p07",
+   "title": "إيمان وموائد",
+   "order": 7,
+   "levels": 20,
+   "words_min": 6,
+   "words_max": 8,
+   "diff": [
+    1,
+    3
+   ],
+   "weights": {
+    "religion": 4,
+    "food": 4,
+    "gulf": 1
+   },
+   "fill": 0
+  },
+  {
+   "id": "p08",
+   "title": "تحدي الخبراء",
+   "order": 8,
+   "levels": 20,
+   "words_min": 6,
+   "words_max": 8,
+   "diff": [
+    2,
+    3
+   ],
+   "weights": {
+    "gulf": 1,
+    "geography": 1,
+    "general": 1,
+    "language": 1,
+    "nature": 1,
+    "science": 1,
+    "sport": 1,
+    "history": 1,
+    "religion": 1,
+    "food": 1
+   },
+   "fill": 1
+  }
+ ]
+}

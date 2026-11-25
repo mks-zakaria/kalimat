@@ -1,0 +1,13 @@
+id,answer,clue_ar,category,region,difficulty,image,source,reviewed_by,reviewed_at
+c0001,دبي,مدينة إماراتية فيها أطول برج في العالم,gulf,gulf,1,,https://ar.wikipedia.org/wiki/برج_خليفة,,
+c0002,الرياض,عاصمة المملكة العربية السعودية,geography,gulf,1,,https://ar.wikipedia.org/wiki/الرياض,,
+c0003,نخلة,شجرة مباركة تكثر في واحة الأحساء,gulf,gulf,1,,https://ar.wikipedia.org/wiki/الأحساء,,
+c0004,صقر,طائر جارح يربيه أهل الخليج للصيد,gulf,gulf,1,,https://ar.wikipedia.org/wiki/صقارة,,
+c0005,قهوة,مشروب عربي يقدم للضيف مع التمر,gulf,gulf,1,,https://ar.wikipedia.org/wiki/قهوة_عربية,,
+c0006,جمل,يلقب بسفينة الصحراء,general,general,1,,https://ar.wikipedia.org/wiki/جمل,,
+c0007,عمان,دولة خليجية عاصمتها مسقط,geography,gulf,1,,https://ar.wikipedia.org/wiki/سلطنة_عمان,,
+c0008,الدوحة,عاصمة دولة قطر,geography,gulf,1,,https://ar.wikipedia.org/wiki/الدوحة,,
+c0009,خيمة,مسكن البدو في الصحراء,general,general,1,,https://ar.wikipedia.org/wiki/خيمة,,
+c0010,رمل,تتكون منه الكثبان في الصحراء,general,general,1,,https://ar.wikipedia.org/wiki/كثيب_رملي,,
+c0011,تمر,ثمر النخيل,general,general,1,,https://ar.wikipedia.org/wiki/تمر,,
+c0012,بحر,مسطح واسع من الماء المالح,general,general,1,,https://ar.wikipedia.org/wiki/بحر,,

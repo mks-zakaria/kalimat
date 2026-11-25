@@ -1,0 +1,38 @@
+  AAA   14.19:1  text                     on bg                   
+  AAA   15.57:1  text                     on surface              
+  AA     5.23:1  text-muted               on bg                   
+  AA     5.75:1  text-muted               on surface              
+  AAA    8.14:1  on-accent                on accent               
+  AAA    7.29:1  accent                   on bg                   
+  AAA    8.00:1  accent                   on surface              
+  AA     6.54:1  accent                   on accent-soft          
+  AA     6.43:1  danger                   on surface              
+  AA     6.20:1  success                  on surface              
+  AA     5.83:1  warning                  on surface              
+  AAA   15.83:1  cell-text                on cell                 
+  AAA   12.10:1  cell-text                on cell-active          
+  AAA    9.47:1  cell-text                on cell-hint            
+  AAA    7.43:1  on-cell-solved           on cell-solved          
+  AAA   15.83:1  key-text                 on key                  
+  AA     6.03:1  key-used-text            on key-used             
+  AAA    9.47:1  on-coin                  on coin                 
+  PASS   3.52:1  border-input             on bg                   ui
+  PASS   3.86:1  border-input             on surface              ui
+  PASS   6.66:1  cell-solved              on bg                   ui
+  PASS   7.29:1  accent                   on bg                   ui
+  AAA   15.45:1  panel-text               on panel                
+  AA     6.25:1  panel-muted              on panel                
+  AAA   15.21:1  tile-text                on tile                 
+  AAA   10.03:1  on-gold                  on gold                 
+  AA     5.37:1  on-turquoise             on turquoise            
+  AA     6.96:1  on-button                on button               
+  AAA   12.51:1  slot-text                on slot                 
+  AAA   15.43:1  sky-text                 on sky-night            large
+  AAA   12.56:1  sky-text                 on sky-dusk             large
+  AAA    5.30:1  sky-text                 on sky-day              large
+  AAA    6.96:1  sky-text                 on sky-dawn             large
+  AAA   10.03:1  gold                     on coin-pill            
+  AAA   16.31:1  sky-text                 on coin-pill            
+  PASS   3.60:1  tile-edge                on panel                ui
+
+  36 pairs, 0 failing AA
