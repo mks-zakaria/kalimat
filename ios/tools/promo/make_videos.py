@@ -16,7 +16,7 @@ import csv, json, math, subprocess, sys, random
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-ROOT = Path(__file__).resolve().parents[2]                 # kalimat-ios
+ROOT = Path(__file__).resolve().parents[2]                 # ios/
 APP = ROOT / "app"
 ICON = APP / "icon/AppIcon.png"
 FONT = "/System/Library/Fonts/SFArabic.ttf"

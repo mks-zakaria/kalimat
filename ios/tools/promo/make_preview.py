@@ -10,7 +10,7 @@ Apple's rules (App Store Connect › App preview specifications; guideline 2.3.4
 The simulator records 1206 x 2622 (aspect 0.460), so the full screen scales to 886 x 1925 and loses 2.5 px at
 top and bottom: the preview is the real screen, status bar and tab bar included. Each clip is decoded from the
 start of its file (exact; seeking into the simulator's variable-frame-rate files is not).
-Same file in kalimat-ios/tools/promo/.
+Same file in ios/tools/promo/.
 """
 import json, subprocess, sys
 from pathlib import Path
