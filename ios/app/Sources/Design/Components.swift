@@ -540,23 +540,44 @@ struct SceneTopBar<Trailing: View>: View {
     var back: (() -> Void)?
     @ViewBuilder var trailing: Trailing
 
+    /// Width of the wider side (back button or trailing actions), measured at runtime so the
+    /// centred title never runs under them on narrow windows (iPhone Duo, iPad split view).
+    @State private var sideWidth: CGFloat = 0
+
     var body: some View {
         ZStack {
             Text(title).font(Theme.F.title).foregroundStyle(.white)
+                .lineLimit(1).minimumScaleFactor(0.6)
                 .shadow(color: .black.opacity(0.35), radius: 3, y: 1)
+                .padding(.horizontal, sideWidth + Theme.S.sm)
             HStack {
-                if let back {
-                    Button(action: back) { RoundIconButton(systemName: "chevron.backward") }
-                        .buttonStyle(PressStyle())
-                        .accessibilityLabel("رجوع")
-                        .accessibilityIdentifier("nav.back")
-                } else { Color.clear.frame(width: 44, height: 44) }
+                Group {
+                    if let back {
+                        Button(action: back) { RoundIconButton(systemName: "chevron.backward") }
+                            .buttonStyle(PressStyle())
+                            .accessibilityLabel("رجوع")
+                            .accessibilityIdentifier("nav.back")
+                    } else { Color.clear.frame(width: 44, height: 44) }
+                }
+                .background(SideWidth())
                 Spacer()
-                trailing
+                trailing.background(SideWidth())
             }
         }
+        .onPreferenceChange(SideWidthKey.self) { sideWidth = $0 }
         .padding(.horizontal, Theme.S.lg)
         .frame(height: Theme.S.topbar)
+    }
+}
+
+private struct SideWidthKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
+}
+
+private struct SideWidth: View {
+    var body: some View {
+        GeometryReader { g in Color.clear.preference(key: SideWidthKey.self, value: g.size.width) }
     }
 }
 

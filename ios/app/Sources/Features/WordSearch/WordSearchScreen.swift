@@ -108,7 +108,7 @@ struct WordSearchScreen: View {
             UnevenRoundedRectangle(topLeadingRadius: 28, topTrailingRadius: 28)
                 .fill(Theme.C.panel.opacity(0.97))
                 .shadow(color: .black.opacity(0.25), radius: 16, y: -4)
-                .ignoresSafeArea(edges: .bottom)
+                .ignoresSafeArea(edges: [.bottom, .horizontal])
         )
     }
 

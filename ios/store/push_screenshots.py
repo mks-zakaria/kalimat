@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """Uploads store/screenshots-ar/*.png to the 6.9" slot (APP_IPHONE_67) of the ar-SA listing.
+Other sets: push_screenshots.py <SLOT> <folder under store/>, e.g.
+  APP_IPAD_PRO_3GEN_129 ipad-ar/13-inch     APP_IPHONE_DUO duo-ar
 Idempotent: a file whose name is already in the set is skipped. Order = file name order."""
 import glob, hashlib, json, os, sys, urllib.request
 sys.path.insert(0, os.path.dirname(__file__))
 from asc_api import api
-APP, LOCALE, SLOT = "6835100780", "ar-SA", "APP_IPHONE_67"
+APP, LOCALE = "6835100780", "ar-SA"
+SLOT = sys.argv[1] if len(sys.argv) > 1 else "APP_IPHONE_67"
+FOLDER = sys.argv[2] if len(sys.argv) > 2 else "screenshots-ar"
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 st, j = api("GET", f"/v1/apps/{APP}/appStoreVersions")
@@ -22,7 +26,7 @@ st, j = api("GET", f"/v1/appScreenshotSets/{sset}/appScreenshots")
 have = {d["attributes"]["fileName"]: d["id"] for d in j["data"]}
 
 ids = []
-for path in sorted(glob.glob(os.path.join(HERE, "screenshots-ar", "*.png"))):
+for path in sorted(glob.glob(os.path.join(HERE, FOLDER, "*.png"))):
     name = os.path.basename(path)
     if name in have:
         print("skip", name); ids.append(have[name]); continue
